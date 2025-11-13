@@ -23,6 +23,14 @@ class HomeController extends Controller
      */
     public function index()
     {
-        return view('home');
+        $user = auth()->user();
+        $recentTransactions = $user->transactions()->latest()->take(5)->get();
+
+        return view('home', [
+            'balance' => $user->balance,
+            'totalIncome' => $user->incomes()->sum('amount'),
+            'totalExpense' => $user->expenses()->sum('amount'),
+            'recentTransactions' => $recentTransactions
+        ]);
     }
 }

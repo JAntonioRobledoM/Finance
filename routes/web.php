@@ -2,6 +2,7 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\HomeController;
+use App\Http\Controllers\TransactionController;
 
 // Public routes
 Route::get('/', fn() => view('welcome'))->name('welcome');
@@ -34,10 +35,13 @@ Route::middleware(['auth'])->group(function () {
     // Redirect /home to /dashboard for compatibility
     Route::redirect('/home', '/dashboard');
 
-    // Financial management routes (to be implemented)
+    // Financial management routes
     Route::prefix('finances')->group(function () {
         // Transactions
-        Route::get('/transactions', fn() => view('finances.transactions'))->name('finances.transactions');
+        Route::get('/transactions', [TransactionController::class, 'index'])->name('finances.transactions');
+        Route::post('/transactions/income', [TransactionController::class, 'storeIncome'])->name('finances.income.store');
+        Route::post('/transactions/expense', [TransactionController::class, 'storeExpense'])->name('finances.expense.store');
+        Route::delete('/transactions/{transaction}', [TransactionController::class, 'destroy'])->name('finances.transactions.destroy');
 
         // Budget
         Route::get('/budget', fn() => view('finances.budget'))->name('finances.budget');

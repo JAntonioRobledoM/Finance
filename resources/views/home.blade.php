@@ -18,8 +18,8 @@
                         <div class="card-body">
                             <div class="d-flex justify-content-between align-items-center">
                                 <div>
-                                    <h6 class="card-title">Current Balance</h6>
-                                    <h2 class="mb-0">$4,304.85</h2>
+                                    <h6 class="card-title">Dinero total</h6>
+                                    <h2 class="mb-0">€{{ number_format($balance, 2) }}</h2>
                                 </div>
                                 <i class="bi bi-wallet2 fs-1 opacity-50"></i>
                             </div>
@@ -31,8 +31,8 @@
                         <div class="card-body">
                             <div class="d-flex justify-content-between align-items-center">
                                 <div>
-                                    <h6 class="card-title">Monthly Income</h6>
-                                    <h2 class="mb-0">$4,580.00</h2>
+                                    <h6 class="card-title">Ingresos</h6>
+                                    <h2 class="mb-0">€{{ number_format($totalIncome, 2) }}</h2>
                                 </div>
                                 <i class="bi bi-graph-up-arrow fs-1 opacity-50"></i>
                             </div>
@@ -44,8 +44,8 @@
                         <div class="card-body">
                             <div class="d-flex justify-content-between align-items-center">
                                 <div>
-                                    <h6 class="card-title">Monthly Expenses</h6>
-                                    <h2 class="mb-0">$2,275.15</h2>
+                                    <h6 class="card-title">Gastos</h6>
+                                    <h2 class="mb-0">€{{ number_format($totalExpense, 2) }}</h2>
                                 </div>
                                 <i class="bi bi-graph-down-arrow fs-1 opacity-50"></i>
                             </div>
@@ -58,35 +58,28 @@
                 <div class="col-md-6">
                     <div class="card shadow-sm mb-4">
                         <div class="card-header d-flex justify-content-between align-items-center">
-                            <h5 class="mb-0">Recent Transactions</h5>
-                            <a href="{{ route('finances.transactions') }}" class="btn btn-sm btn-outline-primary">View All</a>
+                            <h5 class="mb-0">Transacciones recientes</h5>
+                            <a href="{{ route('finances.transactions') }}" class="btn btn-sm btn-outline-primary">Todos</a>
                         </div>
                         <div class="card-body">
                             <div class="list-group list-group-flush">
-                                <a href="#" class="list-group-item list-group-item-action">
-                                    <div class="d-flex w-100 justify-content-between">
-                                        <h6 class="mb-1">Grocery Shopping</h6>
-                                        <span class="text-danger">-$85.25</span>
+                                @forelse($recentTransactions as $transaction)
+                                    <div class="list-group-item">
+                                        <div class="d-flex w-100 justify-content-between">
+                                            <h6 class="mb-1">{{ $transaction->description }}</h6>
+                                            <span class="{{ $transaction->type === 'income' ? 'text-success' : 'text-danger' }}">
+                                                {{ $transaction->type === 'income' ? '+' : '-' }}€{{ number_format($transaction->amount, 2) }}
+                                            </span>
+                                        </div>
+                                        <p class="mb-1 text-muted small">{{ $transaction->category }}</p>
+                                        <small class="text-muted">{{ $transaction->created_at->diffForHumans() }}</small>
                                     </div>
-                                    <p class="mb-1 text-muted small">SuperMarket Inc.</p>
-                                    <small class="text-muted">Today</small>
-                                </a>
-                                <a href="#" class="list-group-item list-group-item-action">
-                                    <div class="d-flex w-100 justify-content-between">
-                                        <h6 class="mb-1">Salary Deposit</h6>
-                                        <span class="text-success">+$2,450.00</span>
+                                @empty
+                                    <div class="list-group-item text-center py-4">
+                                        <p class="mb-0 text-muted">Aún no hay transacciones</p>
+                                        <small class="text-muted">Usa los formularios de abajo para añadir transacciones</small>
                                     </div>
-                                    <p class="mb-1 text-muted small">Acme Corporation</p>
-                                    <small class="text-muted">Yesterday</small>
-                                </a>
-                                <a href="#" class="list-group-item list-group-item-action">
-                                    <div class="d-flex w-100 justify-content-between">
-                                        <h6 class="mb-1">Electric Bill</h6>
-                                        <span class="text-danger">-$95.40</span>
-                                    </div>
-                                    <p class="mb-1 text-muted small">PowerCo Utilities</p>
-                                    <small class="text-muted">2 days ago</small>
-                                </a>
+                                @endforelse
                             </div>
                         </div>
                     </div>
@@ -95,7 +88,7 @@
                     <div class="card shadow-sm mb-4">
                         <div class="card-header d-flex justify-content-between align-items-center">
                             <h5 class="mb-0">Monthly Budget</h5>
-                            <a href="{{ route('finances.budget') }}" class="btn btn-sm btn-outline-primary">Details</a>
+                            <a href="{{ route('finances.budget') }}" class="btn btn-sm btn-outline-primary">Detalles</a>
                         </div>
                         <div class="card-body">
                             <h6 class="card-subtitle mb-3 text-muted">Overall Budget: $3,500.00</h6>
@@ -137,58 +130,115 @@
                 </div>
             </div>
 
-            <div class="row">
-                <div class="col-md-12">
+            <div class="row mb-4">
+                <div class="col-md-6">
                     <div class="card shadow-sm">
-                        <div class="card-header d-flex justify-content-between align-items-center">
-                            <h5 class="mb-0">Savings Goals Progress</h5>
-                            <a href="{{ route('finances.savings') }}" class="btn btn-sm btn-outline-primary">View All</a>
+                        <div class="card-header bg-success text-white">
+                            <h5 class="mb-0"><i class="bi bi-plus-circle me-2"></i> Añadir Ingreso</h5>
                         </div>
                         <div class="card-body">
-                            <div class="row">
-                                <div class="col-md-4">
-                                    <div class="card mb-3">
-                                        <div class="card-body text-center">
-                                            <h5 class="card-title">Vacation Fund</h5>
-                                            <div class="mb-3">
-                                                <span class="display-4 text-primary">60%</span>
-                                            </div>
-                                            <div class="progress mb-2">
-                                                <div class="progress-bar bg-success" role="progressbar" style="width: 60%" aria-valuenow="60" aria-valuemin="0" aria-valuemax="100"></div>
-                                            </div>
-                                            <p class="card-text">$1,500 of $2,500</p>
-                                        </div>
+                            @if(session('success'))
+                                <div class="alert alert-success">
+                                    {{ session('success') }}
+                                </div>
+                            @endif
+
+                            <form action="{{ route('finances.income.store') }}" method="POST">
+                                @csrf
+                                <div class="mb-3">
+                                    <label for="income_amount" class="form-label">Cantidad</label>
+                                    <div class="input-group">
+                                        <span class="input-group-text">€</span>
+                                        <input type="number" class="form-control @error('amount') is-invalid @enderror" id="income_amount" name="amount" step="0.01" min="0.01" placeholder="0.00" required>
+                                        @error('amount')
+                                            <div class="invalid-feedback">{{ $message }}</div>
+                                        @enderror
                                     </div>
                                 </div>
-                                <div class="col-md-4">
-                                    <div class="card mb-3">
-                                        <div class="card-body text-center">
-                                            <h5 class="card-title">Emergency Fund</h5>
-                                            <div class="mb-3">
-                                                <span class="display-4 text-primary">35%</span>
-                                            </div>
-                                            <div class="progress mb-2">
-                                                <div class="progress-bar bg-success" role="progressbar" style="width: 35%" aria-valuenow="35" aria-valuemin="0" aria-valuemax="100"></div>
-                                            </div>
-                                            <p class="card-text">$3,500 of $10,000</p>
-                                        </div>
+
+                                <div class="mb-3">
+                                    <label for="income_description" class="form-label">Descripción</label>
+                                    <input type="text" class="form-control @error('description') is-invalid @enderror" id="income_description" name="description" placeholder="Salary, Investment, etc." required>
+                                    @error('description')
+                                        <div class="invalid-feedback">{{ $message }}</div>
+                                    @enderror
+                                </div>
+
+                                <div class="mb-3">
+                                    <label for="income_category" class="form-label">Categoría</label>
+                                    <select class="form-select" id="income_category" name="category">
+                                        <option value="Salary">Salario</option>
+                                        <option value="Investment">Salidas</option>
+                                        <option value="Gift">Regalo</option>
+                                        <option value="Side Hustle">Side Hustle</option>
+                                        <option value="Other">Otros</option>
+                                    </select>
+                                </div>
+
+                                <div class="d-grid">
+                                    <button type="submit" class="btn btn-success">
+                                        <i class="bi bi-plus-circle me-2"></i> Añadir Ingreso
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-6">
+                    <div class="card shadow-sm">
+                        <div class="card-header bg-danger text-white">
+                            <h5 class="mb-0"><i class="bi bi-dash-circle me-2"></i> Añadir Gasto</h5>
+                        </div>
+                        <div class="card-body">
+                            @if(session('success'))
+                                <div class="alert alert-success">
+                                    {{ session('success') }}
+                                </div>
+                            @endif
+
+                            <form action="{{ route('finances.expense.store') }}" method="POST">
+                                @csrf
+                                <div class="mb-3">
+                                    <label for="expense_amount" class="form-label">Cantidad</label>
+                                    <div class="input-group">
+                                        <span class="input-group-text">€</span>
+                                        <input type="number" class="form-control @error('amount') is-invalid @enderror" id="expense_amount" name="amount" step="0.01" min="0.01" placeholder="0.00" required>
+                                        @error('amount')
+                                            <div class="invalid-feedback">{{ $message }}</div>
+                                        @enderror
                                     </div>
                                 </div>
-                                <div class="col-md-4">
-                                    <div class="card mb-3">
-                                        <div class="card-body text-center">
-                                            <h5 class="card-title">New Laptop</h5>
-                                            <div class="mb-3">
-                                                <span class="display-4 text-success">100%</span>
-                                            </div>
-                                            <div class="progress mb-2">
-                                                <div class="progress-bar bg-success" role="progressbar" style="width: 100%" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100"></div>
-                                            </div>
-                                            <p class="card-text">$1,200 of $1,200</p>
-                                        </div>
-                                    </div>
+
+                                <div class="mb-3">
+                                    <label for="expense_description" class="form-label">Descripción</label>
+                                    <input type="text" class="form-control @error('description') is-invalid @enderror" id="expense_description" name="description" placeholder="Groceries, Rent, etc." required>
+                                    @error('description')
+                                        <div class="invalid-feedback">{{ $message }}</div>
+                                    @enderror
                                 </div>
-                            </div>
+
+                                <div class="mb-3">
+                                    <label for="expense_category" class="form-label">Categoría</label>
+                                    <select class="form-select" id="expense_category" name="category">
+                                        <option value="Housing">Housing</option>
+                                        <option value="Food">Food</option>
+                                        <option value="Transportation">Transportation</option>
+                                        <option value="Utilities">Utilities</option>
+                                        <option value="Entertainment">Entertainment</option>
+                                        <option value="Healthcare">Healthcare</option>
+                                        <option value="Shopping">Shopping</option>
+                                        <option value="Personal">Personal</option>
+                                        <option value="Other">Other</option>
+                                    </select>
+                                </div>
+
+                                <div class="d-grid">
+                                    <button type="submit" class="btn btn-danger">
+                                        <i class="bi bi-dash-circle me-2"></i> Añadir Gasto
+                                    </button>
+                                </div>
+                            </form>
                         </div>
                     </div>
                 </div>

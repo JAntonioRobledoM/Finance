@@ -4,6 +4,7 @@ namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 
@@ -44,5 +45,40 @@ class User extends Authenticatable
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
         ];
+    }
+
+    /**
+     * Get the transactions for the user.
+     */
+    public function transactions(): HasMany
+    {
+        return $this->hasMany(Transaction::class);
+    }
+
+    /**
+     * Get the income transactions for the user.
+     */
+    public function incomes(): HasMany
+    {
+        return $this->hasMany(Transaction::class)->where('type', 'income');
+    }
+
+    /**
+     * Get the expense transactions for the user.
+     */
+    public function expenses(): HasMany
+    {
+        return $this->hasMany(Transaction::class)->where('type', 'expense');
+    }
+
+    /**
+     * Get the balance for the user.
+     */
+    public function getBalanceAttribute(): float
+    {
+        $incomes = $this->incomes()->sum('amount');
+        $expenses = $this->expenses()->sum('amount');
+
+        return $incomes - $expenses;
     }
 }
