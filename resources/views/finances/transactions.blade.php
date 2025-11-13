@@ -4,7 +4,20 @@
 <div class="container">
     <div class="row">
         <div class="col-md-12 mb-4">
-            <h1 class="mb-3">Historial de Transacciones</h1>
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <h1 class="mb-0">Historial de Transacciones</h1>
+                <div>
+                    <a href="{{ route('finances.categories') }}" class="btn btn-primary me-2">
+                        <i class="bi bi-tag me-1"></i> Gestionar Categorías
+                    </a>
+                    <form action="{{ route('logout') }}" method="POST" class="d-inline">
+                        @csrf
+                        <button type="submit" class="btn btn-outline-danger">
+                            <i class="bi bi-box-arrow-right me-1"></i> Cerrar Sesión
+                        </button>
+                    </form>
+                </div>
+            </div>
 
             <!-- Tarjetas de resumen -->
             <div class="row mb-4">
@@ -89,10 +102,14 @@
                                         <td>{{ $transaction->created_at->format('d/m/Y') }}</td>
                                         <td>{{ $transaction->description }}</td>
                                         <td>
-                                            @if($transaction->type == 'income')
-                                                <span class="badge bg-success">{{ $transaction->category }}</span>
+                                            @if($transaction->category)
+                                                @if($transaction->type == 'income')
+                                                    <span class="badge bg-success">{{ $transaction->category }}</span>
+                                                @else
+                                                    <span class="badge bg-danger">{{ $transaction->category }}</span>
+                                                @endif
                                             @else
-                                                <span class="badge bg-danger">{{ $transaction->category }}</span>
+                                                <span class="text-muted">-</span>
                                             @endif
                                         </td>
                                         <td>
@@ -172,14 +189,21 @@
                         </div>
 
                         <div class="mb-3">
-                            <label for="income_category" class="form-label">Categoría</label>
+                            <label for="income_category" class="form-label">Categoría (opcional)</label>
                             <select class="form-select" id="income_category" name="category">
-                                <option value="Salary">Salario</option>
-                                <option value="Investment">Inversión</option>
-                                <option value="Gift">Regalo</option>
-                                <option value="Side Hustle">Ingreso Extra</option>
-                                <option value="Other">Otros</option>
+                                <option value="">-- Selecciona una categoría --</option>
+                                @foreach($incomeCategories as $category)
+                                    <option value="{{ $category->name }}">{{ $category->name }}</option>
+                                @endforeach
+                                <option value="new_category" class="text-primary fw-bold">+ Crear nueva categoría</option>
                             </select>
+                            <small class="form-text text-muted">Selecciona una categoría existente o crea una nueva</small>
+                        </div>
+
+                        <!-- Campo para nueva categoría (inicialmente oculto) -->
+                        <div class="mb-3 d-none" id="new_income_category_div">
+                            <label for="new_income_category" class="form-label">Nueva Categoría</label>
+                            <input type="text" class="form-control" id="new_income_category" name="new_category" placeholder="Nombre de la nueva categoría">
                         </div>
 
                         <div class="d-grid">
@@ -226,18 +250,21 @@
                         </div>
 
                         <div class="mb-3">
-                            <label for="expense_category" class="form-label">Categoría</label>
+                            <label for="expense_category" class="form-label">Categoría (opcional)</label>
                             <select class="form-select" id="expense_category" name="category">
-                                <option value="Housing">Vivienda</option>
-                                <option value="Food">Alimentación</option>
-                                <option value="Transportation">Transporte</option>
-                                <option value="Utilities">Servicios</option>
-                                <option value="Entertainment">Entretenimiento</option>
-                                <option value="Healthcare">Salud</option>
-                                <option value="Shopping">Compras</option>
-                                <option value="Personal">Personal</option>
-                                <option value="Other">Otros</option>
+                                <option value="">-- Selecciona una categoría --</option>
+                                @foreach($expenseCategories as $category)
+                                    <option value="{{ $category->name }}">{{ $category->name }}</option>
+                                @endforeach
+                                <option value="new_category" class="text-primary fw-bold">+ Crear nueva categoría</option>
                             </select>
+                            <small class="form-text text-muted">Selecciona una categoría existente o crea una nueva</small>
+                        </div>
+
+                        <!-- Campo para nueva categoría (inicialmente oculto) -->
+                        <div class="mb-3 d-none" id="new_expense_category_div">
+                            <label for="new_expense_category" class="form-label">Nueva Categoría</label>
+                            <input type="text" class="form-control" id="new_expense_category" name="new_category" placeholder="Nombre de la nueva categoría">
                         </div>
 
                         <div class="d-grid">
@@ -252,3 +279,31 @@
     </div>
 </div>
 @endsection
+
+@push('scripts')
+<script>
+    // Función para manejar la visibilidad del campo de nueva categoría de ingresos
+    document.getElementById('income_category').addEventListener('change', function() {
+        const newCategoryDiv = document.getElementById('new_income_category_div');
+        if (this.value === 'new_category') {
+            newCategoryDiv.classList.remove('d-none');
+            document.getElementById('new_income_category').setAttribute('required', true);
+        } else {
+            newCategoryDiv.classList.add('d-none');
+            document.getElementById('new_income_category').removeAttribute('required');
+        }
+    });
+
+    // Función para manejar la visibilidad del campo de nueva categoría de gastos
+    document.getElementById('expense_category').addEventListener('change', function() {
+        const newCategoryDiv = document.getElementById('new_expense_category_div');
+        if (this.value === 'new_category') {
+            newCategoryDiv.classList.remove('d-none');
+            document.getElementById('new_expense_category').setAttribute('required', true);
+        } else {
+            newCategoryDiv.classList.add('d-none');
+            document.getElementById('new_expense_category').removeAttribute('required');
+        }
+    });
+</script>
+@endpush

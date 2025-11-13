@@ -3,6 +3,7 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\TransactionController;
+use App\Http\Controllers\CategoryController;
 
 // Public routes
 Route::get('/', fn() => view('welcome'))->name('welcome');
@@ -43,8 +44,14 @@ Route::middleware(['auth'])->group(function () {
         Route::post('/transactions/expense', [TransactionController::class, 'storeExpense'])->name('finances.expense.store');
         Route::delete('/transactions/{transaction}', [TransactionController::class, 'destroy'])->name('finances.transactions.destroy');
 
+        // Categories
+        Route::get('/categories', [CategoryController::class, 'index'])->name('finances.categories');
+        Route::post('/categories', [CategoryController::class, 'store'])->name('finances.categories.store');
+        Route::delete('/categories/{category}', [CategoryController::class, 'destroy'])->name('finances.categories.destroy');
+
         // Budget
-        Route::get('/budget', fn() => view('finances.budget'))->name('finances.budget');
+        Route::get('/budget', [HomeController::class, 'budget'])->name('finances.budget');
+        Route::post('/budget', [HomeController::class, 'saveBudget'])->name('finances.budget.save');
 
         // Analytics
         Route::get('/analytics', fn() => view('finances.analytics'))->name('finances.analytics');

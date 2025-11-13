@@ -1,0 +1,72 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Dashboard Report</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        .card { border: 1px solid #ddd; border-radius: 5px; padding: 15px; margin-bottom: 15px; }
+        .card-blue { background-color: #007bff; color: white; }
+        .card-green { background-color: #28a745; color: white; }
+        .card-red { background-color: #dc3545; color: white; }
+        .transaction { border-bottom: 1px solid #eee; padding: 10px 0; }
+        h1, h2, h3 { margin-top: 0; }
+    </style>
+</head>
+<body>
+    <h1>Dashboard Report - 2025-11-13 15:47:00</h1>
+
+    <div style='display: flex; justify-content: space-between;'>
+        <div class='card card-blue' style='width: 30%;'>
+            <h3>Dinero Total</h3>
+            <h2>€-61.25</h2>
+        </div>
+
+        <div class='card card-green' style='width: 30%;'>
+            <h3>Ingresos</h3>
+            <h2>€0.00</h2>
+        </div>
+
+        <div class='card card-red' style='width: 30%;'>
+            <h3>Gastos</h3>
+            <h2>€61.25</h2>
+        </div>
+    </div>
+
+    <h2>Transacciones Recientes</h2>
+    <div class='card'>
+
+        <div class='transaction'>
+            <div style='display: flex; justify-content: space-between;'>
+                <div>
+                    <strong>Supermercado</strong><br>
+                    <small>Comida</small>
+                </div>
+                <div style='color: red; font-weight: bold;'>-€35.75</div>
+            </div>
+            <div><small>13/11/2025 15:43</small></div>
+        </div>
+        <div class='transaction'>
+            <div style='display: flex; justify-content: space-between;'>
+                <div>
+                    <strong>Prueba de gasto</strong><br>
+                    <small>Sin categoría</small>
+                </div>
+                <div style='color: red; font-weight: bold;'>-€25.50</div>
+            </div>
+            <div><small>13/11/2025 15:41</small></div>
+        </div>
+    </div>
+
+    <h2>Información de Depuración</h2>
+    <div class='card'>
+        <p><strong>User ID:</strong> 1</p>
+        <p><strong>Método balance():</strong> €-61.25</p>
+        <p><strong>Método incomes()->sum():</strong> €0.00</p>
+        <p><strong>Método expenses()->sum():</strong> €61.25</p>
+        <p><strong>Número de transacciones de ingreso:</strong> 0</p>
+        <p><strong>Número de transacciones de gasto:</strong> 2</p>
+        <p><strong>SQL Query para gastos:</strong> select * from "transactions" where "transactions"."user_id" = ? and "transactions"."user_id" is not null and "type" = ?</p>
+    </div>
+</body>
+</html>

@@ -5,6 +5,7 @@ namespace App\Models;
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 
@@ -48,6 +49,30 @@ class User extends Authenticatable
     }
 
     /**
+     * Get the categories for the user.
+     */
+    public function categories(): HasMany
+    {
+        return $this->hasMany(Category::class);
+    }
+
+    /**
+     * Get the income categories for the user.
+     */
+    public function incomeCategories(): HasMany
+    {
+        return $this->hasMany(Category::class)->where('type', 'income');
+    }
+
+    /**
+     * Get the expense categories for the user.
+     */
+    public function expenseCategories(): HasMany
+    {
+        return $this->hasMany(Category::class)->where('type', 'expense');
+    }
+
+    /**
      * Get the transactions for the user.
      */
     public function transactions(): HasMany
@@ -81,4 +106,19 @@ class User extends Authenticatable
 
         return $incomes - $expenses;
     }
+
+    /**
+     * Get the budget for the user.
+     */
+    public function budget(): HasOne
+    {
+        return $this->hasOne(Budget::class)->where('period', 'monthly')->latest();
+    }
+
+    /**
+     * Get the budget for the current month.
+     *
+     * Use this method to retrieve the budget, but avoid using the magic property directly.
+     * Instead, do: $budget = $user->budget()->first(); $amount = $budget ? $budget->amount : 1000.00;
+     */
 }

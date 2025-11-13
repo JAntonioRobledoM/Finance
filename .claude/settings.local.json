@@ -5,7 +5,11 @@
       "Bash(php artisan:*)",
       "Bash(composer require:*)",
       "Bash(npm install)",
-      "Bash(npm run build:*)"
+      "Bash(npm run build:*)",
+      "Bash(php add_test_expense.php:*)",
+      "Bash(php debug_transactions.php:*)",
+      "Bash(php add_another_expense.php:*)",
+      "Bash(php generate_dashboard_report.php:*)"
     ],
     "deny": [],
     "ask": []

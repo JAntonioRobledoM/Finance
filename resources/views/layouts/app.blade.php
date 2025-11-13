@@ -54,6 +54,8 @@
 
     <!-- Scripts -->
     @vite(['resources/sass/app.scss', 'resources/js/app.js', 'resources/css/app.css'])
+
+    @stack('scripts')
 </head>
 <body>
     <div id="app">
@@ -74,16 +76,19 @@
                             <a class="nav-link {{ request()->routeIs('dashboard') ? 'active' : '' }}" href="{{ route('dashboard') }}"><i class="bi bi-house-fill me-1"></i> Dashboard</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link {{ request()->routeIs('finances.transactions') ? 'active' : '' }}" href="{{ route('finances.transactions') }}"><i class="bi bi-cash-coin me-1"></i> Transactions</a>
+                            <a class="nav-link {{ request()->routeIs('finances.transactions') ? 'active' : '' }}" href="{{ route('finances.transactions') }}"><i class="bi bi-cash-coin me-1"></i> Transacciones</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link {{ request()->routeIs('finances.analytics') ? 'active' : '' }}" href="{{ route('finances.analytics') }}"><i class="bi bi-bar-chart-line me-1"></i> Analytics</a>
+                            <a class="nav-link {{ request()->routeIs('finances.categories') ? 'active' : '' }}" href="{{ route('finances.categories') }}"><i class="bi bi-tag me-1"></i> Categorías</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link {{ request()->routeIs('finances.budget') ? 'active' : '' }}" href="{{ route('finances.budget') }}"><i class="bi bi-calculator me-1"></i> Budget</a>
+                            <a class="nav-link {{ request()->routeIs('finances.analytics') ? 'active' : '' }}" href="{{ route('finances.analytics') }}"><i class="bi bi-bar-chart-line me-1"></i> Estadísticas</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link {{ request()->routeIs('finances.savings') ? 'active' : '' }}" href="{{ route('finances.savings') }}"><i class="bi bi-piggy-bank-fill me-1"></i> Savings</a>
+                            <a class="nav-link {{ request()->routeIs('finances.budget') ? 'active' : '' }}" href="{{ route('finances.budget') }}"><i class="bi bi-calculator me-1"></i> Presupuesto</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link {{ request()->routeIs('finances.savings') ? 'active' : '' }}" href="{{ route('finances.savings') }}"><i class="bi bi-piggy-bank-fill me-1"></i> Ahorros</a>
                         </li>
                         @endauth
                     </ul>
@@ -94,13 +99,13 @@
                         @guest
                             @if (Route::has('login'))
                                 <li class="nav-item">
-                                    <a class="nav-link" href="{{ route('login') }}"><i class="bi bi-box-arrow-in-right me-1"></i>{{ __('Login') }}</a>
+                                    <a class="btn btn-outline-light me-2" href="{{ route('login') }}"><i class="bi bi-box-arrow-in-right me-1"></i>Iniciar Sesión</a>
                                 </li>
                             @endif
 
                             @if (Route::has('register'))
                                 <li class="nav-item">
-                                    <a class="nav-link" href="{{ route('register') }}"><i class="bi bi-person-plus me-1"></i>{{ __('Register') }}</a>
+                                    <a class="btn btn-light" href="{{ route('register') }}"><i class="bi bi-person-plus me-1"></i>Registrarse</a>
                                 </li>
                             @endif
                         @else
@@ -111,16 +116,19 @@
 
                                 <div class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
                                     <a class="dropdown-item" href="{{ route('profile') }}">
-                                        <i class="bi bi-person me-2"></i>My Profile
+                                        <i class="bi bi-person me-2"></i>Mi Perfil
+                                    </a>
+                                    <a class="dropdown-item" href="{{ route('finances.categories') }}">
+                                        <i class="bi bi-tag me-2"></i>Gestionar Categorías
                                     </a>
                                     <a class="dropdown-item" href="{{ route('profile') }}">
-                                        <i class="bi bi-gear me-2"></i>Settings
+                                        <i class="bi bi-gear me-2"></i>Configuración
                                     </a>
                                     <div class="dropdown-divider"></div>
                                     <a class="dropdown-item" href="{{ route('logout') }}"
                                        onclick="event.preventDefault();
                                                      document.getElementById('logout-form').submit();">
-                                        <i class="bi bi-box-arrow-right me-2"></i>{{ __('Logout') }}
+                                        <i class="bi bi-box-arrow-right me-2"></i>Cerrar Sesión
                                     </a>
 
                                     <form id="logout-form" action="{{ route('logout') }}" method="POST" class="d-none">
@@ -142,12 +150,12 @@
             <div class="container">
                 <div class="row">
                     <div class="col-md-6">
-                        <h5><i class="bi bi-bank me-2"></i>Personal Finance Manager</h5>
-                        <p class="small">Your secure personal finance management solution.</p>
+                        <h5><i class="bi bi-bank me-2"></i>Gestor de Finanzas Personal</h5>
+                        <p class="small">Tu solución segura para gestionar tus finanzas personales.</p>
                     </div>
                     <div class="col-md-6 text-md-end">
-                        <p class="small">&copy; {{ date('Y') }} Personal Finance. All rights reserved.</p>
-                        <p class="small">Secure and private. Your data stays on your device.</p>
+                        <p class="small">&copy; {{ date('Y') }} Finanzas Personales. Todos los derechos reservados.</p>
+                        <p class="small">Seguro y privado. Tus datos se guardan en tu dispositivo.</p>
                     </div>
                 </div>
             </div>

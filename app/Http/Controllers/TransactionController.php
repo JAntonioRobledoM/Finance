@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Transaction;
+use App\Models\Category;
 use Illuminate\Http\Request;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\View\View;
@@ -25,12 +26,16 @@ class TransactionController extends Controller
     public function index(): View
     {
         $transactions = auth()->user()->transactions()->latest()->paginate(15);
+        $incomeCategories = auth()->user()->incomeCategories()->get();
+        $expenseCategories = auth()->user()->expenseCategories()->get();
 
         return view('finances.transactions', [
             'transactions' => $transactions,
             'balance' => auth()->user()->balance,
             'totalIncome' => auth()->user()->incomes()->sum('amount'),
-            'totalExpense' => auth()->user()->expenses()->sum('amount')
+            'totalExpense' => auth()->user()->expenses()->sum('amount'),
+            'incomeCategories' => $incomeCategories,
+            'expenseCategories' => $expenseCategories
         ]);
     }
 
@@ -43,13 +48,53 @@ class TransactionController extends Controller
             'amount' => 'required|numeric|min:0.01',
             'description' => 'required|string|max:255',
             'category' => 'nullable|string|max:255',
+            'new_category' => 'nullable|string|max:255',
         ]);
+
+        // Procesar categoría
+        $category_id = null;
+        $category_name = null;
+
+        if (!empty($validated['category']) && $validated['category'] === 'new_category' && !empty($validated['new_category'])) {
+            // El usuario ha seleccionado "Crear nueva categoría" y proporcionado un nombre
+            $category_name = $validated['new_category'];
+
+            // Verificar si ya existe esta categoría
+            $category = auth()->user()->categories()
+                ->where('name', $category_name)
+                ->where('type', 'income')
+                ->first();
+
+            if (!$category) {
+                // Si no existe, crear nueva categoría
+                $category = auth()->user()->categories()->create([
+                    'name' => $category_name,
+                    'type' => 'income'
+                ]);
+            }
+
+            $category_id = $category->id;
+        } elseif (!empty($validated['category']) && $validated['category'] !== 'new_category') {
+            // El usuario ha seleccionado una categoría existente
+            $category_name = $validated['category'];
+
+            // Buscar si existe la categoría seleccionada
+            $category = auth()->user()->categories()
+                ->where('name', $category_name)
+                ->where('type', 'income')
+                ->first();
+
+            if ($category) {
+                $category_id = $category->id;
+            }
+        }
 
         auth()->user()->transactions()->create([
             'type' => 'income',
             'amount' => $validated['amount'],
             'description' => $validated['description'],
-            'category' => $validated['category'] ?? 'General',
+            'category' => $category_name,
+            'category_id' => $category_id,
         ]);
 
         return redirect()->back()->with('success', 'Ingreso añadido correctamente!');
@@ -64,13 +109,53 @@ class TransactionController extends Controller
             'amount' => 'required|numeric|min:0.01',
             'description' => 'required|string|max:255',
             'category' => 'nullable|string|max:255',
+            'new_category' => 'nullable|string|max:255',
         ]);
+
+        // Procesar categoría
+        $category_id = null;
+        $category_name = null;
+
+        if (!empty($validated['category']) && $validated['category'] === 'new_category' && !empty($validated['new_category'])) {
+            // El usuario ha seleccionado "Crear nueva categoría" y proporcionado un nombre
+            $category_name = $validated['new_category'];
+
+            // Verificar si ya existe esta categoría
+            $category = auth()->user()->categories()
+                ->where('name', $category_name)
+                ->where('type', 'expense')
+                ->first();
+
+            if (!$category) {
+                // Si no existe, crear nueva categoría
+                $category = auth()->user()->categories()->create([
+                    'name' => $category_name,
+                    'type' => 'expense'
+                ]);
+            }
+
+            $category_id = $category->id;
+        } elseif (!empty($validated['category']) && $validated['category'] !== 'new_category') {
+            // El usuario ha seleccionado una categoría existente
+            $category_name = $validated['category'];
+
+            // Buscar si existe la categoría seleccionada
+            $category = auth()->user()->categories()
+                ->where('name', $category_name)
+                ->where('type', 'expense')
+                ->first();
+
+            if ($category) {
+                $category_id = $category->id;
+            }
+        }
 
         auth()->user()->transactions()->create([
             'type' => 'expense',
             'amount' => $validated['amount'],
             'description' => $validated['description'],
-            'category' => $validated['category'] ?? 'General',
+            'category' => $category_name,
+            'category_id' => $category_id,
         ]);
 
         return redirect()->back()->with('success', 'Gasto añadido correctamente!');

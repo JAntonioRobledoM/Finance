@@ -4,7 +4,20 @@
 <div class="container">
     <div class="row">
         <div class="col-md-12 mb-4">
-            <h1 class="mb-3">Dashboard</h1>
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <h1 class="mb-0">Dashboard</h1>
+                <div>
+                    <a href="{{ route('finances.categories') }}" class="btn btn-primary me-2">
+                        <i class="bi bi-tag me-1"></i> Gestionar Categorías
+                    </a>
+                    <form action="{{ route('logout') }}" method="POST" class="d-inline">
+                        @csrf
+                        <button type="submit" class="btn btn-outline-danger">
+                            <i class="bi bi-box-arrow-right me-1"></i> Cerrar Sesión
+                        </button>
+                    </form>
+                </div>
+            </div>
 
             @if (session('status'))
                 <div class="alert alert-success" role="alert">
@@ -71,7 +84,7 @@
                                                 {{ $transaction->type === 'income' ? '+' : '-' }}€{{ number_format($transaction->amount, 2) }}
                                             </span>
                                         </div>
-                                        <p class="mb-1 text-muted small">{{ $transaction->category }}</p>
+                                        <p class="mb-1 text-muted small">{{ $transaction->category ?? '-' }}</p>
                                         <small class="text-muted">{{ $transaction->created_at->diffForHumans() }}</small>
                                     </div>
                                 @empty
@@ -87,43 +100,86 @@
                 <div class="col-md-6">
                     <div class="card shadow-sm mb-4">
                         <div class="card-header d-flex justify-content-between align-items-center">
-                            <h5 class="mb-0">Monthly Budget</h5>
+                            <h5 class="mb-0">Gastos por Categoría</h5>
                             <a href="{{ route('finances.budget') }}" class="btn btn-sm btn-outline-primary">Detalles</a>
                         </div>
                         <div class="card-body">
-                            <h6 class="card-subtitle mb-3 text-muted">Overall Budget: $3,500.00</h6>
+                            <h6 class="card-subtitle mb-3 text-muted">Presupuesto Total: €{{ number_format($budgetTotal, 2) }}</h6>
+
+                            @php
+                                $totalExpenseAmount = $totalExpense;
+                                $progressPercentage = min(100, ($totalExpenseAmount / $budgetTotal) * 100);
+                                $progressColor = $progressPercentage > 90 ? 'bg-danger' : ($progressPercentage > 70 ? 'bg-warning' : 'bg-primary');
+                            @endphp
+
                             <div class="progress mb-4" style="height: 20px">
-                                <div class="progress-bar bg-primary" role="progressbar" style="width: 65%" aria-valuenow="65" aria-valuemin="0" aria-valuemax="100">65%</div>
+                                <div class="progress-bar {{ $progressColor }}" role="progressbar"
+                                     style="width: {{ $progressPercentage }}%"
+                                     aria-valuenow="{{ $progressPercentage }}"
+                                     aria-valuemin="0"
+                                     aria-valuemax="100">{{ round($progressPercentage) }}%</div>
                             </div>
+
+                            <h6 class="mb-3">Gastos por Categoría</h6>
+
+                            @if(count($categoryExpenses) > 0)
+                                @foreach($categoryExpenses as $expense)
+                                    @php
+                                        $categoryPercentage = min(100, ($expense->total / $budgetTotal) * 100);
+                                        $categoryProgressColor = 'bg-info';
+                                        if ($categoryPercentage > 90) {
+                                            $categoryProgressColor = 'bg-danger';
+                                        } elseif ($categoryPercentage > 70) {
+                                            $categoryProgressColor = 'bg-warning';
+                                        } elseif ($categoryPercentage > 50) {
+                                            $categoryProgressColor = 'bg-success';
+                                        }
+                                    @endphp
+                                    <div class="mb-3">
+                                        <div class="d-flex justify-content-between mb-1">
+                                            <span>{{ $expense->category }}</span>
+                                            <span>€{{ number_format($expense->total, 2) }}</span>
+                                        </div>
+                                        <div class="progress" style="height: 10px">
+                                            <div class="progress-bar {{ $categoryProgressColor }}"
+                                                 role="progressbar"
+                                                 style="width: {{ $categoryPercentage }}%"
+                                                 aria-valuenow="{{ $categoryPercentage }}"
+                                                 aria-valuemin="0"
+                                                 aria-valuemax="100"></div>
+                                        </div>
+                                    </div>
+                                @endforeach
+                            @else
+                                <div class="alert alert-info">
+                                    No hay gastos categorizados aún.
+                                </div>
+                            @endif
+
+                            <!-- Gastos sin categoría -->
+                            <h6 class="mt-4 mb-3">Gastos sin Categoría</h6>
+
+                            @php
+                                $uncategorizedPercentage = min(100, ($uncategorizedExpenses / $budgetTotal) * 100);
+                            @endphp
 
                             <div class="mb-3">
                                 <div class="d-flex justify-content-between mb-1">
-                                    <span>Housing</span>
-                                    <span>$850.00 / $1,000.00</span>
+                                    <span>Sin categoría</span>
+                                    <span>€{{ number_format($uncategorizedExpenses, 2) }}</span>
                                 </div>
                                 <div class="progress" style="height: 10px">
-                                    <div class="progress-bar bg-success" role="progressbar" style="width: 85%" aria-valuenow="85" aria-valuemin="0" aria-valuemax="100"></div>
+                                    <div class="progress-bar bg-secondary"
+                                         role="progressbar"
+                                         style="width: {{ $uncategorizedPercentage }}%"
+                                         aria-valuenow="{{ $uncategorizedPercentage }}"
+                                         aria-valuemin="0"
+                                         aria-valuemax="100"></div>
                                 </div>
                             </div>
 
-                            <div class="mb-3">
-                                <div class="d-flex justify-content-between mb-1">
-                                    <span>Food & Dining</span>
-                                    <span>$450.00 / $600.00</span>
-                                </div>
-                                <div class="progress" style="height: 10px">
-                                    <div class="progress-bar bg-info" role="progressbar" style="width: 75%" aria-valuenow="75" aria-valuemin="0" aria-valuemax="100"></div>
-                                </div>
-                            </div>
-
-                            <div class="mb-3">
-                                <div class="d-flex justify-content-between mb-1">
-                                    <span>Transportation</span>
-                                    <span>$250.00 / $300.00</span>
-                                </div>
-                                <div class="progress" style="height: 10px">
-                                    <div class="progress-bar bg-warning" role="progressbar" style="width: 83%" aria-valuenow="83" aria-valuemin="0" aria-valuemax="100"></div>
-                                </div>
+                            <div class="text-center mt-4">
+                                <small class="text-muted">Añade categorías a tus gastos para un mejor seguimiento</small>
                             </div>
                         </div>
                     </div>
@@ -165,14 +221,21 @@
                                 </div>
 
                                 <div class="mb-3">
-                                    <label for="income_category" class="form-label">Categoría</label>
+                                    <label for="income_category" class="form-label">Categoría (opcional)</label>
                                     <select class="form-select" id="income_category" name="category">
-                                        <option value="Salary">Salario</option>
-                                        <option value="Investment">Salidas</option>
-                                        <option value="Gift">Regalo</option>
-                                        <option value="Side Hustle">Side Hustle</option>
-                                        <option value="Other">Otros</option>
+                                        <option value="">-- Selecciona una categoría --</option>
+                                        @foreach($incomeCategories as $category)
+                                            <option value="{{ $category->name }}">{{ $category->name }}</option>
+                                        @endforeach
+                                        <option value="new_category" class="text-primary fw-bold">+ Crear nueva categoría</option>
                                     </select>
+                                    <small class="form-text text-muted">Selecciona una categoría existente o crea una nueva</small>
+                                </div>
+
+                                <!-- Campo para nueva categoría (inicialmente oculto) -->
+                                <div class="mb-3 d-none" id="new_income_category_div">
+                                    <label for="new_income_category" class="form-label">Nueva Categoría</label>
+                                    <input type="text" class="form-control" id="new_income_category" name="new_category" placeholder="Nombre de la nueva categoría">
                                 </div>
 
                                 <div class="d-grid">
@@ -219,18 +282,21 @@
                                 </div>
 
                                 <div class="mb-3">
-                                    <label for="expense_category" class="form-label">Categoría</label>
+                                    <label for="expense_category" class="form-label">Categoría (opcional)</label>
                                     <select class="form-select" id="expense_category" name="category">
-                                        <option value="Housing">Housing</option>
-                                        <option value="Food">Food</option>
-                                        <option value="Transportation">Transportation</option>
-                                        <option value="Utilities">Utilities</option>
-                                        <option value="Entertainment">Entertainment</option>
-                                        <option value="Healthcare">Healthcare</option>
-                                        <option value="Shopping">Shopping</option>
-                                        <option value="Personal">Personal</option>
-                                        <option value="Other">Other</option>
+                                        <option value="">-- Selecciona una categoría --</option>
+                                        @foreach($expenseCategories as $category)
+                                            <option value="{{ $category->name }}">{{ $category->name }}</option>
+                                        @endforeach
+                                        <option value="new_category" class="text-primary fw-bold">+ Crear nueva categoría</option>
                                     </select>
+                                    <small class="form-text text-muted">Selecciona una categoría existente o crea una nueva</small>
+                                </div>
+
+                                <!-- Campo para nueva categoría (inicialmente oculto) -->
+                                <div class="mb-3 d-none" id="new_expense_category_div">
+                                    <label for="new_expense_category" class="form-label">Nueva Categoría</label>
+                                    <input type="text" class="form-control" id="new_expense_category" name="new_category" placeholder="Nombre de la nueva categoría">
                                 </div>
 
                                 <div class="d-grid">
@@ -247,3 +313,31 @@
     </div>
 </div>
 @endsection
+
+@push('scripts')
+<script>
+    // Función para manejar la visibilidad del campo de nueva categoría de ingresos
+    document.getElementById('income_category').addEventListener('change', function() {
+        const newCategoryDiv = document.getElementById('new_income_category_div');
+        if (this.value === 'new_category') {
+            newCategoryDiv.classList.remove('d-none');
+            document.getElementById('new_income_category').setAttribute('required', true);
+        } else {
+            newCategoryDiv.classList.add('d-none');
+            document.getElementById('new_income_category').removeAttribute('required');
+        }
+    });
+
+    // Función para manejar la visibilidad del campo de nueva categoría de gastos
+    document.getElementById('expense_category').addEventListener('change', function() {
+        const newCategoryDiv = document.getElementById('new_expense_category_div');
+        if (this.value === 'new_category') {
+            newCategoryDiv.classList.remove('d-none');
+            document.getElementById('new_expense_category').setAttribute('required', true);
+        } else {
+            newCategoryDiv.classList.add('d-none');
+            document.getElementById('new_expense_category').removeAttribute('required');
+        }
+    });
+</script>
+@endpush

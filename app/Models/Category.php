@@ -5,8 +5,9 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
-class Transaction extends Model
+class Category extends Model
 {
     use HasFactory;
 
@@ -17,15 +18,12 @@ class Transaction extends Model
      */
     protected $fillable = [
         'user_id',
+        'name',
         'type',
-        'amount',
-        'description',
-        'category',
-        'category_id',
     ];
 
     /**
-     * Get the user that owns the transaction.
+     * Get the user that owns the category.
      */
     public function user(): BelongsTo
     {
@@ -33,15 +31,15 @@ class Transaction extends Model
     }
 
     /**
-     * Get the category that owns the transaction.
+     * Get the transactions for the category.
      */
-    public function categoryRelation(): BelongsTo
+    public function transactions(): HasMany
     {
-        return $this->belongsTo(Category::class, 'category_id');
+        return $this->hasMany(Transaction::class);
     }
 
     /**
-     * Scope a query to only include income transactions.
+     * Scope a query to only include income categories.
      */
     public function scopeIncome($query)
     {
@@ -49,7 +47,7 @@ class Transaction extends Model
     }
 
     /**
-     * Scope a query to only include expense transactions.
+     * Scope a query to only include expense categories.
      */
     public function scopeExpense($query)
     {
