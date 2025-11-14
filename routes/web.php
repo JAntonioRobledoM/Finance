@@ -43,6 +43,8 @@ Route::middleware(['auth'])->group(function () {
         Route::post('/transactions/income', [TransactionController::class, 'storeIncome'])->name('finances.income.store');
         Route::post('/transactions/expense', [TransactionController::class, 'storeExpense'])->name('finances.expense.store');
         Route::delete('/transactions/{transaction}', [TransactionController::class, 'destroy'])->name('finances.transactions.destroy');
+        Route::get('/transactions/{transaction}/edit', [TransactionController::class, 'edit'])->name('finances.transactions.edit');
+        Route::put('/transactions/{transaction}', [TransactionController::class, 'update'])->name('finances.transactions.update');
 
         // Categories
         Route::get('/categories', [CategoryController::class, 'index'])->name('finances.categories');

@@ -123,10 +123,16 @@
                                             {{ $transaction->type == 'income' ? '+' : '-' }}€{{ number_format($transaction->amount, 2) }}
                                         </td>
                                         <td>
+                                            <!-- Botón de editar categoría -->
+                                            <a href="{{ route('finances.transactions.edit', $transaction->id) }}" class="btn btn-sm btn-outline-primary me-1" title="Editar categoría">
+                                                <i class="bi bi-tag"></i>
+                                            </a>
+
+                                            <!-- Formulario para eliminar transacción -->
                                             <form action="{{ route('finances.transactions.destroy', $transaction->id) }}" method="POST" class="d-inline">
                                                 @csrf
                                                 @method('DELETE')
-                                                <button type="submit" class="btn btn-sm btn-outline-danger" onclick="return confirm('¿Estás seguro de eliminar esta transacción?')">
+                                                <button type="submit" class="btn btn-sm btn-outline-danger" onclick="return confirm('¿Estás seguro de eliminar esta transacción?')" title="Eliminar transacción">
                                                     <i class="bi bi-trash"></i>
                                                 </button>
                                             </form>
