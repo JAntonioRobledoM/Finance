@@ -7,15 +7,31 @@
             <div class="card shadow-sm">
                 <div class="card-header d-flex justify-content-between align-items-center bg-primary text-white">
                     <h5 class="mb-0">
-                        <i class="bi bi-pencil-square me-2"></i> Editar Categoría de Transacción
+                        <i class="bi bi-pencil-square me-2"></i> Editar Transacción
                     </h5>
                     <a href="{{ route('finances.transactions') }}" class="btn btn-sm btn-light">
                         <i class="bi bi-arrow-left me-1"></i> Volver
                     </a>
                 </div>
                 <div class="card-body">
+                    <!-- Contenedor de notificaciones -->
+                    <div id="notification-container" style="position: fixed; top: 10px; right: 10px; z-index: 9999; max-width: 350px;"></div>
+
+                    @if (session('success') || session('error'))
+                        <script>
+                            document.addEventListener('DOMContentLoaded', function() {
+                                @if(session('success'))
+                                    showGlobalNotification('{{ session('success') }}', 'success');
+                                @endif
+                                @if(session('error'))
+                                    showGlobalNotification('{{ session('error') }}', 'danger');
+                                @endif
+                            });
+                        </script>
+                    @endif
+
                     <div class="alert alert-info">
-                        <i class="bi bi-info-circle me-2"></i> Estás editando la categoría para la siguiente transacción:
+                        <i class="bi bi-info-circle me-2"></i> Estás editando la siguiente transacción:
                     </div>
 
                     <!-- Información de la transacción -->
@@ -23,7 +39,7 @@
                         <div class="card-body">
                             <div class="row">
                                 <div class="col-md-6">
-                                    <p class="mb-1"><strong>Fecha:</strong> {{ $transaction->created_at->format('d/m/Y H:i') }}</p>
+                                    <p class="mb-1"><strong>Fecha:</strong> {{ $transaction->effective_date->format('d/m/Y') }}</p>
                                     <p class="mb-1"><strong>Descripción:</strong> {{ $transaction->description }}</p>
                                     <p class="mb-1">
                                         <strong>Tipo:</strong>
@@ -62,7 +78,30 @@
                         @method('PUT')
 
                         <div class="mb-3">
-                            <label for="category" class="form-label">Nueva Categoría</label>
+                            <label for="transaction_date" class="form-label">Fecha de Transacción</label>
+                            <input type="date" class="form-control" id="transaction_date" name="transaction_date" value="{{ $transaction->effective_date->format('Y-m-d') }}">
+                            <small class="form-text text-muted">La fecha en que se realizó esta transacción</small>
+                            @error('transaction_date')
+                                <div class="text-danger">{{ $message }}</div>
+                            @enderror
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="amount" class="form-label">Cantidad</label>
+                            <div class="input-group">
+                                <span class="input-group-text">€</span>
+                                <input type="number" class="form-control @error('amount') is-invalid @enderror"
+                                       id="amount" name="amount" step="0.01" min="0.01"
+                                       value="{{ $transaction->amount }}" required>
+                                @error('amount')
+                                    <div class="invalid-feedback">{{ $message }}</div>
+                                @enderror
+                            </div>
+                            <small class="form-text text-muted">La cantidad de la transacción</small>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="category" class="form-label">Categoría</label>
                             <select class="form-select" id="category" name="category">
                                 <option value="">-- Sin categoría --</option>
                                 @foreach($categories as $category)

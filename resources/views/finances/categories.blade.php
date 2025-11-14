@@ -11,17 +11,20 @@
                 </a>
             </div>
 
-            <!-- Mensajes de éxito y error -->
-            @if (session('success'))
-                <div class="alert alert-success" role="alert">
-                    {{ session('success') }}
-                </div>
-            @endif
+            <!-- Contenedor de notificaciones -->
+            <div id="notification-container" style="position: fixed; top: 10px; right: 10px; z-index: 9999; max-width: 350px;"></div>
 
-            @if (session('error'))
-                <div class="alert alert-danger" role="alert">
-                    {{ session('error') }}
-                </div>
+            @if (session('success') || session('error'))
+                <script>
+                    document.addEventListener('DOMContentLoaded', function() {
+                        @if(session('success'))
+                            showGlobalNotification('{{ session('success') }}', 'success');
+                        @endif
+                        @if(session('error'))
+                            showGlobalNotification('{{ session('error') }}', 'danger');
+                        @endif
+                    });
+                </script>
             @endif
 
             <div class="row mb-4">
@@ -85,7 +88,7 @@
                                             <form action="{{ route('finances.categories.destroy', $category->id) }}" method="POST" class="d-inline">
                                                 @csrf
                                                 @method('DELETE')
-                                                <button type="submit" class="btn btn-sm btn-outline-danger" onclick="return confirm('¿Estás seguro de eliminar esta categoría?')">
+                                                <button type="submit" class="btn btn-sm btn-outline-danger">
                                                     <i class="bi bi-trash"></i>
                                                 </button>
                                             </form>
@@ -116,7 +119,7 @@
                                             <form action="{{ route('finances.categories.destroy', $category->id) }}" method="POST" class="d-inline">
                                                 @csrf
                                                 @method('DELETE')
-                                                <button type="submit" class="btn btn-sm btn-outline-danger" onclick="return confirm('¿Estás seguro de eliminar esta categoría?')">
+                                                <button type="submit" class="btn btn-sm btn-outline-danger">
                                                     <i class="bi bi-trash"></i>
                                                 </button>
                                             </form>

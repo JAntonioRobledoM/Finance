@@ -19,10 +19,23 @@
                 </div>
             </div>
 
-            @if (session('status'))
-                <div class="alert alert-success" role="alert">
-                    {{ session('status') }}
-                </div>
+            <!-- Contenedor de notificaciones -->
+            <div id="notification-container" style="position: fixed; top: 10px; right: 10px; z-index: 9999; max-width: 350px;"></div>
+
+            @if (session('status') || session('success') || session('error'))
+                <script>
+                    document.addEventListener('DOMContentLoaded', function() {
+                        @if(session('status'))
+                            showGlobalNotification('{{ session('status') }}', 'success');
+                        @endif
+                        @if(session('success'))
+                            showGlobalNotification('{{ session('success') }}', 'success');
+                        @endif
+                        @if(session('error'))
+                            showGlobalNotification('{{ session('error') }}', 'danger');
+                        @endif
+                    });
+                </script>
             @endif
 
             <div class="row mb-4">
@@ -85,7 +98,7 @@
                                             </span>
                                         </div>
                                         <p class="mb-1 text-muted small">{{ $transaction->category ?? '-' }}</p>
-                                        <small class="text-muted">{{ $transaction->created_at->diffForHumans() }}</small>
+                                        <small class="text-muted">{{ $transaction->effective_date->format('d/m/Y') }}</small>
                                     </div>
                                 @empty
                                     <div class="list-group-item text-center py-4">
@@ -193,14 +206,18 @@
                             <h5 class="mb-0"><i class="bi bi-plus-circle me-2"></i> Añadir Ingreso</h5>
                         </div>
                         <div class="card-body">
-                            @if(session('success'))
-                                <div class="alert alert-success">
-                                    {{ session('success') }}
-                                </div>
-                            @endif
+                            <!-- Success messages are now shown as toast notifications -->
 
                             <form action="{{ route('finances.income.store') }}" method="POST">
                                 @csrf
+                                <div class="mb-3">
+                                    <label for="income_transaction_date" class="form-label">Fecha</label>
+                                    <input type="date" class="form-control @error('transaction_date') is-invalid @enderror" id="income_transaction_date" name="transaction_date" value="{{ date('Y-m-d') }}">
+                                    @error('transaction_date')
+                                        <div class="invalid-feedback">{{ $message }}</div>
+                                    @enderror
+                                </div>
+
                                 <div class="mb-3">
                                     <label for="income_amount" class="form-label">Cantidad</label>
                                     <div class="input-group">
@@ -254,14 +271,18 @@
                             <h5 class="mb-0"><i class="bi bi-dash-circle me-2"></i> Añadir Gasto</h5>
                         </div>
                         <div class="card-body">
-                            @if(session('success'))
-                                <div class="alert alert-success">
-                                    {{ session('success') }}
-                                </div>
-                            @endif
+                            <!-- Success messages are now shown as toast notifications -->
 
                             <form action="{{ route('finances.expense.store') }}" method="POST">
                                 @csrf
+                                <div class="mb-3">
+                                    <label for="expense_transaction_date" class="form-label">Fecha</label>
+                                    <input type="date" class="form-control @error('transaction_date') is-invalid @enderror" id="expense_transaction_date" name="transaction_date" value="{{ date('Y-m-d') }}">
+                                    @error('transaction_date')
+                                        <div class="invalid-feedback">{{ $message }}</div>
+                                    @enderror
+                                </div>
+
                                 <div class="mb-3">
                                     <label for="expense_amount" class="form-label">Cantidad</label>
                                     <div class="input-group">

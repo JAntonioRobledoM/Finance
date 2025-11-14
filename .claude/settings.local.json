@@ -9,7 +9,9 @@
       "Bash(php add_test_expense.php:*)",
       "Bash(php debug_transactions.php:*)",
       "Bash(php add_another_expense.php:*)",
-      "Bash(php generate_dashboard_report.php:*)"
+      "Bash(php generate_dashboard_report.php:*)",
+      "Bash(dir:*)",
+      "Bash(sqlite3:*)"
     ],
     "deny": [],
     "ask": []

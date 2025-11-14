@@ -24,7 +24,20 @@ class HomeController extends Controller
     public function index()
     {
         $user = auth()->user();
-        $recentTransactions = $user->transactions()->latest()->take(5)->get();
+        try {
+            $recentTransactions = $user->transactions()
+                ->orderByRaw('transaction_date IS NULL')
+                ->orderByDesc('transaction_date')
+                ->orderByDesc('created_at')
+                ->take(5)
+                ->get();
+        } catch (\Exception $e) {
+            // Fallback in case transaction_date column doesn't exist yet
+            $recentTransactions = $user->transactions()
+                ->latest()
+                ->take(5)
+                ->get();
+        }
         $incomeCategories = $user->incomeCategories()->get();
         $expenseCategories = $user->expenseCategories()->get();
 

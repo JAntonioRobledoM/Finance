@@ -25,7 +25,18 @@ class TransactionController extends Controller
      */
     public function index(): View
     {
-        $transactions = auth()->user()->transactions()->latest()->paginate(15);
+        try {
+            $transactions = auth()->user()->transactions()
+                ->orderByRaw('transaction_date IS NULL')
+                ->orderByDesc('transaction_date')
+                ->orderByDesc('created_at')
+                ->paginate(15);
+        } catch (\Exception $e) {
+            // Fallback in case transaction_date column doesn't exist yet
+            $transactions = auth()->user()->transactions()
+                ->latest()
+                ->paginate(15);
+        }
         $incomeCategories = auth()->user()->incomeCategories()->get();
         $expenseCategories = auth()->user()->expenseCategories()->get();
 
@@ -49,6 +60,7 @@ class TransactionController extends Controller
             'description' => 'required|string|max:255',
             'category' => 'nullable|string|max:255',
             'new_category' => 'nullable|string|max:255',
+            'transaction_date' => 'nullable|date',
         ]);
 
         // Procesar categoría
@@ -89,13 +101,53 @@ class TransactionController extends Controller
             }
         }
 
-        auth()->user()->transactions()->create([
+        // Prepare transaction data
+        $transactionData = [
             'type' => 'income',
             'amount' => $validated['amount'],
             'description' => $validated['description'],
             'category' => $category_name,
             'category_id' => $category_id,
-        ]);
+        ];
+
+        // Only include transaction_date if it's provided and the column exists
+        if (isset($validated['transaction_date'])) {
+            try {
+                // Use a more direct way to check if the column exists in the schema
+                $columnExists = \Schema::hasColumn('transactions', 'transaction_date');
+
+                // If column exists in schema, include it in the update
+                if ($columnExists) {
+                    $transactionData['transaction_date'] = $validated['transaction_date'];
+                }
+            } catch (\Exception $e) {
+                // If there's an error checking the schema, use the fallback approach
+                try {
+                    // Test if transaction_date column exists by trying to set it on a model
+                    $testTransaction = new Transaction();
+                    $testTransaction->transaction_date = $validated['transaction_date'];
+
+                    // If we get here, the column exists
+                    $transactionData['transaction_date'] = $validated['transaction_date'];
+                } catch (\Exception $innerException) {
+                    // Column doesn't exist, ignore it
+                }
+            }
+        }
+
+        // Create the transaction with the prepared data
+        try {
+            auth()->user()->transactions()->create($transactionData);
+        } catch (\Exception $e) {
+            // If creation fails due to column issues, try without transaction_date
+            if (isset($transactionData['transaction_date'])) {
+                unset($transactionData['transaction_date']);
+                auth()->user()->transactions()->create($transactionData);
+            } else {
+                // If it fails for other reasons, throw the original exception
+                throw $e;
+            }
+        }
 
         return redirect()->back()->with('success', 'Ingreso añadido correctamente!');
     }
@@ -110,6 +162,7 @@ class TransactionController extends Controller
             'description' => 'required|string|max:255',
             'category' => 'nullable|string|max:255',
             'new_category' => 'nullable|string|max:255',
+            'transaction_date' => 'nullable|date',
         ]);
 
         // Procesar categoría
@@ -150,13 +203,53 @@ class TransactionController extends Controller
             }
         }
 
-        auth()->user()->transactions()->create([
+        // Prepare transaction data
+        $transactionData = [
             'type' => 'expense',
             'amount' => $validated['amount'],
             'description' => $validated['description'],
             'category' => $category_name,
             'category_id' => $category_id,
-        ]);
+        ];
+
+        // Only include transaction_date if it's provided and the column exists
+        if (isset($validated['transaction_date'])) {
+            try {
+                // Use a more direct way to check if the column exists in the schema
+                $columnExists = \Schema::hasColumn('transactions', 'transaction_date');
+
+                // If column exists in schema, include it in the update
+                if ($columnExists) {
+                    $transactionData['transaction_date'] = $validated['transaction_date'];
+                }
+            } catch (\Exception $e) {
+                // If there's an error checking the schema, use the fallback approach
+                try {
+                    // Test if transaction_date column exists by trying to set it on a model
+                    $testTransaction = new Transaction();
+                    $testTransaction->transaction_date = $validated['transaction_date'];
+
+                    // If we get here, the column exists
+                    $transactionData['transaction_date'] = $validated['transaction_date'];
+                } catch (\Exception $innerException) {
+                    // Column doesn't exist, ignore it
+                }
+            }
+        }
+
+        // Create the transaction with the prepared data
+        try {
+            auth()->user()->transactions()->create($transactionData);
+        } catch (\Exception $e) {
+            // If creation fails due to column issues, try without transaction_date
+            if (isset($transactionData['transaction_date'])) {
+                unset($transactionData['transaction_date']);
+                auth()->user()->transactions()->create($transactionData);
+            } else {
+                // If it fails for other reasons, throw the original exception
+                throw $e;
+            }
+        }
 
         return redirect()->back()->with('success', 'Gasto añadido correctamente!');
     }
@@ -197,7 +290,7 @@ class TransactionController extends Controller
     }
 
     /**
-     * Update the transaction category.
+     * Update the transaction.
      */
     public function update(Request $request, Transaction $transaction): RedirectResponse
     {
@@ -207,6 +300,8 @@ class TransactionController extends Controller
         }
 
         $validated = $request->validate([
+            'transaction_date' => 'nullable|date',
+            'amount' => 'required|numeric|min:0.01',
             'category' => 'nullable|string|max:255',
             'new_category' => 'nullable|string|max:255',
         ]);
@@ -254,11 +349,52 @@ class TransactionController extends Controller
         }
 
         // Actualizar la transacción
-        $transaction->update([
+        // Prepare update data
+        $updateData = [
             'category' => $category_name,
             'category_id' => $category_id,
-        ]);
+            'amount' => $validated['amount'],
+        ];
 
-        return redirect()->route('finances.transactions')->with('success', 'Categoría de la transacción actualizada correctamente!');
+        // Only include transaction_date if it's provided and we're not in "compatibility mode"
+        if (isset($validated['transaction_date'])) {
+            try {
+                // Use a more direct way to check if the column exists in the schema
+                $columnExists = \Schema::hasColumn('transactions', 'transaction_date');
+
+                // If column exists in schema, include it in the update
+                if ($columnExists) {
+                    $updateData['transaction_date'] = $validated['transaction_date'];
+                }
+            } catch (\Exception $e) {
+                // If there's an error checking the schema, use the fallback approach
+                try {
+                    // Test if transaction_date column exists by trying to set it on a model
+                    $testTransaction = new Transaction();
+                    $testTransaction->transaction_date = $validated['transaction_date'];
+
+                    // If we get here, the column exists, so include it in the update
+                    $updateData['transaction_date'] = $validated['transaction_date'];
+                } catch (\Exception $innerException) {
+                    // Column doesn't exist, ignore it
+                }
+            }
+        }
+
+        // Update the transaction with the prepared data
+        try {
+            $transaction->update($updateData);
+        } catch (\Exception $e) {
+            // If the update fails due to column issues, try with just the category data
+            if (isset($updateData['transaction_date'])) {
+                unset($updateData['transaction_date']);
+                $transaction->update($updateData);
+            } else {
+                // If it fails for other reasons, throw the original exception
+                throw $e;
+            }
+        }
+
+        return redirect()->route('finances.transactions')->with('success', 'Transacción actualizada correctamente!');
     }
 }

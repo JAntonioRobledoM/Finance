@@ -22,6 +22,17 @@ class Transaction extends Model
         'description',
         'category',
         'category_id',
+        'transaction_date',
+    ];
+
+    /**
+     * The attributes that should be cast.
+     *
+     * @var array<string, string>
+     */
+    protected $casts = [
+        'transaction_date' => 'date',
+        'created_at' => 'datetime',
     ];
 
     /**
@@ -54,5 +65,21 @@ class Transaction extends Model
     public function scopeExpense($query)
     {
         return $query->where('type', 'expense');
+    }
+
+    /**
+     * Get the effective date for the transaction.
+     * Uses transaction_date if available, otherwise falls back to created_at.
+     *
+     * @return \Illuminate\Support\Carbon
+     */
+    public function getEffectiveDateAttribute()
+    {
+        try {
+            return $this->transaction_date ?? $this->created_at;
+        } catch (\Exception $e) {
+            // If there's any issue with transaction_date, fallback to created_at
+            return $this->created_at;
+        }
     }
 }

@@ -55,6 +55,66 @@
     <!-- Scripts -->
     @vite(['resources/sass/app.scss', 'resources/js/app.js', 'resources/css/app.css'])
 
+    <!-- Global notification helper function -->
+    <script>
+        function showGlobalNotification(message, type) {
+            // Check if the container exists, or create it
+            let container = document.getElementById('notification-container');
+            if (!container) {
+                container = document.createElement('div');
+                container.id = 'notification-container';
+                container.style = 'position: fixed; top: 10px; right: 10px; z-index: 9999; max-width: 350px;';
+                document.body.appendChild(container);
+            }
+
+            // Create the notification
+            const notification = document.createElement('div');
+            notification.className = `toast align-items-center text-white bg-${type} border-0 mb-2`;
+            notification.role = 'alert';
+            notification.setAttribute('aria-live', 'assertive');
+            notification.setAttribute('aria-atomic', 'true');
+
+            notification.innerHTML = `
+                <div class="d-flex">
+                    <div class="toast-body">
+                        ${message}
+                    </div>
+                    <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+                </div>
+            `;
+
+            container.appendChild(notification);
+
+            // Check if Bootstrap is loaded
+            if (typeof bootstrap !== 'undefined') {
+                const toast = new bootstrap.Toast(notification, {
+                    autohide: true,
+                    delay: 3000
+                });
+
+                toast.show();
+
+                // Auto-remove notification after it's hidden
+                notification.addEventListener('hidden.bs.toast', function() {
+                    container.removeChild(notification);
+                });
+            } else {
+                // Fallback if Bootstrap is not available
+                notification.style.display = 'block';
+                notification.style.backgroundColor = type === 'success' ? '#198754' : type === 'danger' ? '#dc3545' : '#0d6efd';
+                notification.style.color = '#fff';
+                notification.style.padding = '10px';
+                notification.style.marginBottom = '10px';
+                notification.style.borderRadius = '4px';
+
+                // Auto-hide after 3 seconds
+                setTimeout(() => {
+                    container.removeChild(notification);
+                }, 3000);
+            }
+        }
+    </script>
+
     @stack('scripts')
 </head>
 <body>

@@ -62,17 +62,20 @@
                 </div>
             </div>
 
-            <!-- Mensajes de éxito y error -->
-            @if (session('success'))
-                <div class="alert alert-success" role="alert">
-                    {{ session('success') }}
-                </div>
-            @endif
+            <!-- Contenedor de notificaciones -->
+            <div id="notification-container" style="position: fixed; top: 10px; right: 10px; z-index: 9999; max-width: 350px;"></div>
 
-            @if (session('error'))
-                <div class="alert alert-danger" role="alert">
-                    {{ session('error') }}
-                </div>
+            @if (session('success') || session('error'))
+                <script>
+                    document.addEventListener('DOMContentLoaded', function() {
+                        @if(session('success'))
+                            showGlobalNotification('{{ session('success') }}', 'success');
+                        @endif
+                        @if(session('error'))
+                            showGlobalNotification('{{ session('error') }}', 'danger');
+                        @endif
+                    });
+                </script>
             @endif
 
             <!-- Tabla de transacciones -->
@@ -99,7 +102,7 @@
                             <tbody>
                                 @forelse($transactions as $transaction)
                                     <tr>
-                                        <td>{{ $transaction->created_at->format('d/m/Y') }}</td>
+                                        <td>{{ $transaction->effective_date->format('d/m/Y') }}</td>
                                         <td>{{ $transaction->description }}</td>
                                         <td>
                                             @if($transaction->category)
@@ -123,16 +126,16 @@
                                             {{ $transaction->type == 'income' ? '+' : '-' }}€{{ number_format($transaction->amount, 2) }}
                                         </td>
                                         <td>
-                                            <!-- Botón de editar categoría -->
-                                            <a href="{{ route('finances.transactions.edit', $transaction->id) }}" class="btn btn-sm btn-outline-primary me-1" title="Editar categoría">
-                                                <i class="bi bi-tag"></i>
+                                            <!-- Botón de editar transacción -->
+                                            <a href="{{ route('finances.transactions.edit', $transaction->id) }}" class="btn btn-sm btn-outline-primary me-1" title="Editar transacción">
+                                                <i class="bi bi-pencil"></i>
                                             </a>
 
                                             <!-- Formulario para eliminar transacción -->
                                             <form action="{{ route('finances.transactions.destroy', $transaction->id) }}" method="POST" class="d-inline">
                                                 @csrf
                                                 @method('DELETE')
-                                                <button type="submit" class="btn btn-sm btn-outline-danger" onclick="return confirm('¿Estás seguro de eliminar esta transacción?')" title="Eliminar transacción">
+                                                <button type="submit" class="btn btn-sm btn-outline-danger" title="Eliminar transacción">
                                                     <i class="bi bi-trash"></i>
                                                 </button>
                                             </form>
@@ -167,14 +170,18 @@
                     <h5 class="mb-0"><i class="bi bi-plus-circle me-2"></i> Añadir Ingreso</h5>
                 </div>
                 <div class="card-body">
-                    @if(session('success'))
-                        <div class="alert alert-success">
-                            {{ session('success') }}
-                        </div>
-                    @endif
+                    <!-- Las notificaciones ahora se muestran arriba -->
 
                     <form action="{{ route('finances.income.store') }}" method="POST">
                         @csrf
+                        <div class="mb-3">
+                            <label for="income_transaction_date" class="form-label">Fecha</label>
+                            <input type="date" class="form-control @error('transaction_date') is-invalid @enderror" id="income_transaction_date" name="transaction_date" value="{{ date('Y-m-d') }}">
+                            @error('transaction_date')
+                                <div class="invalid-feedback">{{ $message }}</div>
+                            @enderror
+                        </div>
+
                         <div class="mb-3">
                             <label for="income_amount" class="form-label">Cantidad</label>
                             <div class="input-group">
@@ -228,14 +235,18 @@
                     <h5 class="mb-0"><i class="bi bi-dash-circle me-2"></i> Añadir Gasto</h5>
                 </div>
                 <div class="card-body">
-                    @if(session('success'))
-                        <div class="alert alert-success">
-                            {{ session('success') }}
-                        </div>
-                    @endif
+                    <!-- Las notificaciones ahora se muestran arriba -->
 
                     <form action="{{ route('finances.expense.store') }}" method="POST">
                         @csrf
+                        <div class="mb-3">
+                            <label for="expense_transaction_date" class="form-label">Fecha</label>
+                            <input type="date" class="form-control @error('transaction_date') is-invalid @enderror" id="expense_transaction_date" name="transaction_date" value="{{ date('Y-m-d') }}">
+                            @error('transaction_date')
+                                <div class="invalid-feedback">{{ $message }}</div>
+                            @enderror
+                        </div>
+
                         <div class="mb-3">
                             <label for="expense_amount" class="form-label">Cantidad</label>
                             <div class="input-group">
@@ -310,6 +321,13 @@
             newCategoryDiv.classList.add('d-none');
             document.getElementById('new_expense_category').removeAttribute('required');
         }
+    });
+
+    // Evitar las confirmaciones en los formularios de eliminación
+    // Ya no usamos confirmaciones para mejorar la experiencia del usuario
+    document.addEventListener('DOMContentLoaded', function() {
+        // No es necesario interceptar los formularios, ya que queremos que se envíen directamente
+        // Las notificaciones se mostrarán después de la acción a través del sistema de sesiones
     });
 </script>
 @endpush
