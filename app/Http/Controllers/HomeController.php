@@ -58,10 +58,49 @@ class HomeController extends Controller
         $budget = $user->budget()->first();
         $budgetTotal = $budget ? (float) $budget->amount : 1000.00; // Valor predeterminado si no hay presupuesto
 
+        // Calcular ingresos y gastos del mes actual
+        $currentMonth = now()->startOfMonth();
+        $nextMonth = now()->startOfMonth()->addMonth();
+
+        try {
+            // Ingresos del mes actual
+            $currentMonthIncome = $user->incomes()
+                ->where(function($query) use ($currentMonth, $nextMonth) {
+                    $query->whereBetween('transaction_date', [$currentMonth, $nextMonth])
+                        ->orWhere(function($q) use ($currentMonth, $nextMonth) {
+                            // Para transacciones sin transaction_date, usar created_at
+                            $q->whereNull('transaction_date')
+                               ->whereBetween('created_at', [$currentMonth, $nextMonth]);
+                        });
+                })
+                ->sum('amount');
+
+            // Gastos del mes actual
+            $currentMonthExpense = $user->expenses()
+                ->where(function($query) use ($currentMonth, $nextMonth) {
+                    $query->whereBetween('transaction_date', [$currentMonth, $nextMonth])
+                        ->orWhere(function($q) use ($currentMonth, $nextMonth) {
+                            // Para transacciones sin transaction_date, usar created_at
+                            $q->whereNull('transaction_date')
+                               ->whereBetween('created_at', [$currentMonth, $nextMonth]);
+                        });
+                })
+                ->sum('amount');
+        } catch (\Exception $e) {
+            // Fallback en caso de error (por ejemplo, si la columna transaction_date no existe)
+            $currentMonthIncome = $user->incomes()
+                ->whereBetween('created_at', [$currentMonth, $nextMonth])
+                ->sum('amount');
+
+            $currentMonthExpense = $user->expenses()
+                ->whereBetween('created_at', [$currentMonth, $nextMonth])
+                ->sum('amount');
+        }
+
         return view('home', [
             'balance' => $user->balance,
-            'totalIncome' => $user->incomes()->sum('amount'),
-            'totalExpense' => $user->expenses()->sum('amount'),
+            'totalIncome' => $currentMonthIncome, // Ingresos del mes actual
+            'totalExpense' => $currentMonthExpense, // Gastos del mes actual
             'recentTransactions' => $recentTransactions,
             'incomeCategories' => $incomeCategories,
             'expenseCategories' => $expenseCategories,

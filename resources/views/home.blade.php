@@ -57,7 +57,7 @@
                         <div class="card-body">
                             <div class="d-flex justify-content-between align-items-center">
                                 <div>
-                                    <h6 class="card-title">Ingresos</h6>
+                                    <h6 class="card-title">Ingresos (este mes)</h6>
                                     <h2 class="mb-0">€{{ number_format($totalIncome, 2) }}</h2>
                                 </div>
                                 <i class="bi bi-graph-up-arrow fs-1 opacity-50"></i>
@@ -70,7 +70,7 @@
                         <div class="card-body">
                             <div class="d-flex justify-content-between align-items-center">
                                 <div>
-                                    <h6 class="card-title">Gastos</h6>
+                                    <h6 class="card-title">Gastos (este mes)</h6>
                                     <h2 class="mb-0">€{{ number_format($totalExpense, 2) }}</h2>
                                 </div>
                                 <i class="bi bi-graph-down-arrow fs-1 opacity-50"></i>
