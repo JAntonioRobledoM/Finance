@@ -98,9 +98,9 @@
                                 </div>
 
                                 <div class="mb-3 form-check">
-                                    <input type="checkbox" class="form-check-input" id="terms" required>
+                                    <input type="checkbox" class="form-check-input" id="terms" name="terms" required>
                                     <label class="form-check-label small" for="terms">
-                                        I agree to the <a href="#" class="text-decoration-none">Terms of Service</a> and <a href="#" class="text-decoration-none">Privacy Policy</a>
+                                        Acepto los <a href="{{ route('terms') }}" class="text-decoration-none" target="_blank">Términos y Condiciones</a> y la <a href="{{ route('privacy') }}" class="text-decoration-none" target="_blank">Política de Privacidad</a>
                                     </label>
                                 </div>
 

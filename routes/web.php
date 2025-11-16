@@ -4,9 +4,15 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\TransactionController;
 use App\Http\Controllers\CategoryController;
+use App\Http\Controllers\StaticPagesController;
+use App\Http\Controllers\AnalyticsController;
 
 // Public routes
 Route::get('/', fn() => view('welcome'))->name('welcome');
+
+// Static pages
+Route::get('/terms', [StaticPagesController::class, 'terms'])->name('terms');
+Route::get('/privacy', [StaticPagesController::class, 'privacy'])->name('privacy');
 
 // Authentication routes (apply guest middleware to prevent logged-in users from accessing)
 Route::middleware('guest')->group(function () {
@@ -56,7 +62,8 @@ Route::middleware(['auth'])->group(function () {
         Route::post('/budget', [HomeController::class, 'saveBudget'])->name('finances.budget.save');
 
         // Analytics
-        Route::get('/analytics', fn() => view('finances.analytics'))->name('finances.analytics');
+        Route::get('/analytics', [AnalyticsController::class, 'index'])->name('finances.analytics');
+        Route::get('/analytics/data', [AnalyticsController::class, 'getAnalyticsData'])->name('finances.analytics.data');
 
         // Savings
         Route::get('/savings', fn() => view('finances.savings'))->name('finances.savings');

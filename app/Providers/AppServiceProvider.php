@@ -19,6 +19,9 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        //
+        // Configuración de la paginación personalizada
+        \Illuminate\Pagination\Paginator::useBootstrapFive();
+        \Illuminate\Pagination\Paginator::defaultView('vendor.pagination.custom');
+        \Illuminate\Pagination\Paginator::defaultSimpleView('vendor.pagination.simple-custom');
     }
 }

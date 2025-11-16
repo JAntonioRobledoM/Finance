@@ -53,7 +53,12 @@
     </style>
 
     <!-- Scripts -->
-    @vite(['resources/sass/app.scss', 'resources/js/app.js', 'resources/css/app.css'])
+    <!-- Comentamos la directiva Vite que está causando problemas -->
+    <!-- @vite(['resources/sass/app.scss', 'resources/js/app.js', 'resources/css/app.css']) -->
+
+    <!-- Usamos enlaces directos a CDN de Bootstrap como alternativa -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js" defer></script>
 
     <!-- Global notification helper function -->
     <script>
@@ -216,6 +221,10 @@
                     <div class="col-md-6 text-md-end">
                         <p class="small">&copy; {{ date('Y') }} Finanzas Personales. Todos los derechos reservados.</p>
                         <p class="small">Seguro y privado. Tus datos se guardan en tu dispositivo.</p>
+                        <p class="small">
+                            <a href="{{ route('terms') }}" class="text-muted me-3">Términos y Condiciones</a>
+                            <a href="{{ route('privacy') }}" class="text-muted">Política de Privacidad</a>
+                        </p>
                     </div>
                 </div>
             </div>

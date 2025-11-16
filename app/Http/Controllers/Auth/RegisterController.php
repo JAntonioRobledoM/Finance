@@ -52,6 +52,10 @@ class RegisterController extends Controller
             'name' => ['required', 'string', 'max:255'],
             'email' => ['required', 'string', 'email', 'max:255', 'unique:users'],
             'password' => ['required', 'string', 'min:8', 'confirmed'],
+            'terms' => ['required', 'accepted'],
+        ], [
+            'terms.required' => 'Debes aceptar los Términos y Condiciones y la Política de Privacidad para registrarte.',
+            'terms.accepted' => 'Debes aceptar los Términos y Condiciones y la Política de Privacidad para registrarte.',
         ]);
     }
 

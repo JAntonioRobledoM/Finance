@@ -154,9 +154,43 @@
                     </div>
 
                     <!-- Paginación -->
-                    <div class="d-flex justify-content-center mt-4">
-                        {{ $transactions->links() }}
+                    <div class="d-flex justify-content-between align-items-center mt-4 pagination-wrapper">
+                        <div class="text-muted pagination-info">
+                            Mostrando {{ $transactions->firstItem() ?? 0 }} - {{ $transactions->lastItem() ?? 0 }} de {{ $transactions->total() }} transacciones
+                        </div>
+                        {{ $transactions->appends(request()->except('page'))->links() }}
+                        <div class="text-muted pagination-page-size">
+                            <select class="form-select form-select-sm pagination-size-select" onchange="window.location.href=this.value">
+                                <option value="{{ request()->fullUrlWithQuery(['perPage' => 15]) }}" {{ request('perPage', 15) == 15 ? 'selected' : '' }}>15 por página</option>
+                                <option value="{{ request()->fullUrlWithQuery(['perPage' => 25]) }}" {{ request('perPage') == 25 ? 'selected' : '' }}>25 por página</option>
+                                <option value="{{ request()->fullUrlWithQuery(['perPage' => 50]) }}" {{ request('perPage') == 50 ? 'selected' : '' }}>50 por página</option>
+                            </select>
+                        </div>
                     </div>
+
+                    <style>
+                        .pagination-wrapper {
+                            flex-wrap: wrap;
+                            gap: 10px;
+                        }
+
+                        .pagination-size-select {
+                            max-width: 140px;
+                            display: inline-block;
+                        }
+
+                        @media (max-width: 768px) {
+                            .pagination-wrapper {
+                                flex-direction: column;
+                                align-items: center;
+                            }
+
+                            .pagination-info, .pagination-page-size {
+                                margin-bottom: 10px;
+                                text-align: center;
+                            }
+                        }
+                    </style>
                 </div>
             </div>
         </div>

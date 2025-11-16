@@ -23,19 +23,27 @@ class TransactionController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index(): View
+    public function index(Request $request): View
     {
+        // Obtener el número de elementos por página desde la solicitud
+        $perPage = $request->query('perPage', 15);
+
+        // Asegurar que perPage sea un valor permitido
+        if (!in_array($perPage, [15, 25, 50])) {
+            $perPage = 15;
+        }
+
         try {
             $transactions = auth()->user()->transactions()
                 ->orderByRaw('transaction_date IS NULL')
                 ->orderByDesc('transaction_date')
                 ->orderByDesc('created_at')
-                ->paginate(15);
+                ->paginate($perPage);
         } catch (\Exception $e) {
             // Fallback in case transaction_date column doesn't exist yet
             $transactions = auth()->user()->transactions()
                 ->latest()
-                ->paginate(15);
+                ->paginate($perPage);
         }
         $incomeCategories = auth()->user()->incomeCategories()->get();
         $expenseCategories = auth()->user()->expenseCategories()->get();
