@@ -37,7 +37,7 @@
         }
 
         .desktop-nav {
-            background-color: #2b3a4a;
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
             border-bottom: 1px solid #1a2533;
         }
 
@@ -53,12 +53,12 @@
         }
 
         .desktop-nav .nav-link:hover {
-            background-color: rgba(255, 255, 255, 0.1);
+            background-color: rgba(255, 255, 255, 0.15);
             color: #ffffff;
         }
 
         .desktop-nav .nav-link.active {
-            background-color: rgba(255, 255, 255, 0.2);
+            background-color: rgba(255, 255, 255, 0.25);
             color: #ffffff;
         }
 
@@ -76,13 +76,13 @@
         }
 
         .btn-primary {
-            background-color: #3050a0;
-            border-color: #3050a0;
+            background-color: #2a5298;
+            border-color: #2a5298;
         }
 
         .btn-primary:hover, .btn-primary:focus {
-            background-color: #253c80;
-            border-color: #253c80;
+            background-color: #1e3c72;
+            border-color: #1e3c72;
         }
 
         main {
@@ -220,19 +220,6 @@
 </head>
 <body>
     <div id="app">
-        <!-- Barra de título de la aplicación -->
-        <div class="bg-dark text-white py-2 px-3 d-flex align-items-center justify-content-between">
-            <div class="d-flex align-items-center">
-                <i class="bi bi-bank me-2 fs-5"></i>
-            </div>
-            <div class="text-center flex-grow-1">
-                <span class="fs-6 fw-semibold">{{ config('app.name', 'Finance') }} - Aplicación de Finanzas Personales</span>
-            </div>
-            <div>
-                <small class="text-white-50">v1.0.0</small>
-            </div>
-        </div>
-
         <nav class="navbar navbar-expand-md navbar-dark desktop-nav shadow-sm py-1">
             <div class="container">
                 <a class="navbar-brand" href="{{ url('/') }}">

@@ -17,7 +17,7 @@ class NativeAppServiceProvider implements ProvidesPhpIni
         Window::open()
     ->width(1280)
     ->height(800)
-    ->title('Mi App');
+    ->title(config('app.name', 'Finance'));
 
     }
 

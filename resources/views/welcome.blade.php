@@ -22,12 +22,12 @@
                         <div class="card-body p-0">
                             <div class="row g-0">
                                 <div class="col-md-6">
-                                    <div class="p-5" style="background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);">
-                                        <div class="text-white mb-5">
+                                    <div class="p-5 h-100 d-flex flex-column" style="background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);">
+                                        <div class="text-white mb-4">
                                             <h2 class="fw-bold">Controla y maneja tu dinero</h2>
                                             <p class="opacity-75 mt-3">Comienza a usarla de forma totalmente gratuita y libre hoy</p>
                                         </div>
-                                        <div class="d-flex flex-column gap-3 text-white">
+                                        <div class="d-flex flex-column gap-3 text-white grow">
                                             <div class="d-flex align-items-center">
                                                 <i class="bi bi-check-circle-fill me-3 fs-4"></i>
                                                 <div>
@@ -158,6 +158,7 @@
                     </div>
                 </div>
             </div>
+
         </div>
     </div>
 </div>

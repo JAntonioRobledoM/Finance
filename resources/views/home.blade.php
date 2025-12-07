@@ -72,74 +72,8 @@
             @endif
 
             <div class="row">
-                <!-- Barra lateral estilo aplicación de escritorio -->
-                <div class="col-md-3 mb-4">
-                    <div class="card shadow-sm border mb-4">
-                        <div class="card-header bg-dark text-white">
-                            <h5 class="mb-0"><i class="bi bi-pc-display me-2"></i>Aplicación Desktop</h5>
-                        </div>
-                        <div class="card-body p-0">
-                            <div class="list-group list-group-flush">
-                                <a href="{{ route('dashboard') }}" class="list-group-item list-group-item-action active">
-                                    <i class="bi bi-house-fill me-2"></i>Panel Principal
-                                </a>
-                                <a href="{{ route('finances.transactions') }}" class="list-group-item list-group-item-action">
-                                    <i class="bi bi-cash-coin me-2"></i>Transacciones
-                                </a>
-                                <a href="{{ route('finances.categories') }}" class="list-group-item list-group-item-action">
-                                    <i class="bi bi-tag me-2"></i>Categorías
-                                </a>
-                                <a href="{{ route('finances.budget') }}" class="list-group-item list-group-item-action">
-                                    <i class="bi bi-calculator me-2"></i>Presupuesto
-                                </a>
-                                <a href="{{ route('finances.analytics') }}" class="list-group-item list-group-item-action">
-                                    <i class="bi bi-bar-chart-line me-2"></i>Estadísticas
-                                </a>
-                                <a href="{{ route('finances.savings') }}" class="list-group-item list-group-item-action">
-                                    <i class="bi bi-piggy-bank-fill me-2"></i>Ahorros
-                                </a>
-                            </div>
-                        </div>
-                        <div class="card-footer bg-light">
-                            <div class="d-flex align-items-center">
-                                <i class="bi bi-hdd-fill text-success me-2"></i>
-                                <small class="text-muted">Datos almacenados localmente</small>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="card shadow-sm border">
-                        <div class="card-body">
-                            <h5 class="card-title mb-3">Resumen Financiero</h5>
-
-                            <div class="d-flex justify-content-between align-items-center mb-3">
-                                <span class="text-primary fw-bold">Saldo Total:</span>
-                                <span class="fs-5">€{{ number_format($balance, 2) }}</span>
-                            </div>
-
-                            <div class="d-flex justify-content-between align-items-center mb-3">
-                                <span class="text-success">Ingresos (este mes):</span>
-                                <span>+€{{ number_format($totalIncome, 2) }}</span>
-                            </div>
-
-                            <div class="d-flex justify-content-between align-items-center">
-                                <span class="text-danger">Gastos (este mes):</span>
-                                <span>-€{{ number_format($totalExpense, 2) }}</span>
-                            </div>
-
-                            <hr>
-
-                            <div class="text-center">
-                                <a href="{{ route('finances.analytics') }}" class="btn btn-sm btn-outline-primary w-100">
-                                    <i class="bi bi-bar-chart-line me-1"></i> Ver estadísticas completas
-                                </a>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
                 <!-- Contenido principal -->
-                <div class="col-md-9">
+                <div class="col-md-12">
                     <!-- Tarjetas de resumen con estilo de escritorio -->
                     <div class="row mb-4">
                         <div class="col-md-4">
