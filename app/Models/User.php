@@ -121,4 +121,36 @@ class User extends Authenticatable
      * Use this method to retrieve the budget, but avoid using the magic property directly.
      * Instead, do: $budget = $user->budget()->first(); $amount = $budget ? $budget->amount : 1000.00;
      */
+
+    /**
+     * Get the savings goals for the user.
+     */
+    public function savingsGoals(): HasMany
+    {
+        return $this->hasMany(SavingsGoal::class);
+    }
+
+    /**
+     * Get the active savings goals for the user.
+     */
+    public function activeSavingsGoals(): HasMany
+    {
+        return $this->hasMany(SavingsGoal::class)->where('status', 'active');
+    }
+
+    /**
+     * Get the completed savings goals for the user.
+     */
+    public function completedSavingsGoals(): HasMany
+    {
+        return $this->hasMany(SavingsGoal::class)->where('status', 'completed');
+    }
+
+    /**
+     * Get the savings contributions for the user.
+     */
+    public function savingsContributions(): HasMany
+    {
+        return $this->hasMany(SavingsContribution::class);
+    }
 }

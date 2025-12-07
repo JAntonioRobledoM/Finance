@@ -8,8 +8,8 @@
                 <div class="row g-0">
                     <div class="col-md-5 bg-primary text-white d-flex flex-column justify-content-center align-items-center p-4" style="background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);">
                         <div class="text-center mb-5">
-                            <h2 class="fw-bold">Personal Finance</h2>
-                            <p class="fs-5">Manage your money smarter</p>
+                            <h2 class="fw-bold">Finance</h2>
+                            <p class="fs-5">Gestiona tu dinero de forma inteligente</p>
                         </div>
                         <div class="d-none d-md-block">
                             <div class="text-center mb-4">
@@ -18,7 +18,7 @@
                                 </svg>
                             </div>
                             <div class="text-center mt-5">
-                                <p class="small opacity-75">Secure Banking Experience</p>
+                                <p class="small opacity-75">Experiencia bancaria segura</p>
                                 <div class="d-flex justify-content-center">
                                     <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-shield-lock mx-1" viewBox="0 0 16 16">
                                         <path d="M5.338 1.59a61 61 0 0 0-2.837.856.48.48 0 0 0-.328.39c-.554 4.157.726 7.19 2.253 9.188a10.7 10.7 0 0 0 2.287 2.233c.346.244.652.42.893.533q.18.085.293.118a1 1 0 0 0 .866 0q.114-.033.293-.118c.24-.113.547-.29.893-.533a10.7 10.7 0 0 0 2.287-2.233c1.527-1.997 2.807-5.031 2.253-9.188a.48.48 0 0 0-.328-.39c-.651-.213-1.75-.56-2.837-.855C9.552 1.29 8.531 1.067 8 1.067c-.53 0-1.552.223-2.662.524zM5.072.56C6.157.265 7.31 0 8 0s1.843.265 2.928.56c1.11.3 2.229.655 2.887.87a1.54 1.54 0 0 1 1.044 1.262c.596 4.477-.787 7.795-2.465 9.99a11.8 11.8 0 0 1-2.517 2.453 7 7 0 0 1-1.048.625c-.28.132-.581.24-.829.24s-.548-.108-.829-.24a7 7 0 0 1-1.048-.625 11.8 11.8 0 0 1-2.517-2.453C1.928 10.487.545 7.169 1.141 2.692A1.54 1.54 0 0 1 2.185 1.43 63 63 0 0 1 5.072.56z"/>
@@ -38,13 +38,13 @@
                     </div>
                     <div class="col-md-7">
                         <div class="card-body p-4 p-md-5">
-                            <h3 class="card-title text-center mb-4 fw-bold">Welcome Back</h3>
+                            <h3 class="card-title text-center mb-4 fw-bold">Bienvenido de nuevo</h3>
                             <form method="POST" action="{{ route('login') }}">
                                 @csrf
                                 <div class="mb-4">
                                     <div class="form-floating">
                                         <input id="email" type="email" class="form-control @error('email') is-invalid @enderror" name="email" value="{{ old('email') }}" required autocomplete="email" autofocus placeholder="name@example.com">
-                                        <label for="email">{{ __('Email Address') }}</label>
+                                        <label for="email">{{ __('Correo electrónico') }}</label>
                                         @error('email')
                                             <span class="invalid-feedback" role="alert">
                                                 <strong>{{ $message }}</strong>
@@ -56,7 +56,7 @@
                                 <div class="mb-3">
                                     <div class="form-floating">
                                         <input id="password" type="password" class="form-control @error('password') is-invalid @enderror" name="password" required autocomplete="current-password" placeholder="Password">
-                                        <label for="password">{{ __('Password') }}</label>
+                                        <label for="password">{{ __('Contraseña') }}</label>
                                         @error('password')
                                             <span class="invalid-feedback" role="alert">
                                                 <strong>{{ $message }}</strong>
@@ -65,32 +65,15 @@
                                     </div>
                                 </div>
 
-                                <div class="mb-3">
-                                    <div class="form-check">
-                                        <input class="form-check-input" type="checkbox" name="remember" id="remember" {{ old('remember') ? 'checked' : '' }}>
-                                        <label class="form-check-label" for="remember">
-                                            {{ __('Remember Me') }}
-                                        </label>
-                                    </div>
-                                </div>
-
                                 <div class="d-grid gap-2 mb-4">
                                     <button type="submit" class="btn btn-primary py-3 fw-semibold">
-                                        {{ __('Log In') }}
+                                        {{ __('Iniciar Sesión') }}
                                     </button>
                                 </div>
 
-                                <div class="text-center">
-                                    @if (Route::has('password.request'))
-                                        <a class="text-decoration-none" href="{{ route('password.request') }}">
-                                            {{ __('Forgot Your Password?') }}
-                                        </a>
-                                    @endif
-                                </div>
-
                                 <div class="text-center mt-4">
-                                    <p class="mb-0">Don't have an account?
-                                        <a href="{{ route('register') }}" class="text-decoration-none fw-bold">Create one</a>
+                                    <p class="mb-0">¿No tienes una cuenta?
+                                        <a href="{{ route('register') }}" class="text-decoration-none fw-bold">Crear una</a>
                                     </p>
                                 </div>
                             </form>

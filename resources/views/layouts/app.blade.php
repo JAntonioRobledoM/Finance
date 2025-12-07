@@ -7,7 +7,7 @@
     <!-- CSRF Token -->
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
-    <title>{{ config('app.name', 'Personal Finance') }}</title>
+    <title>{{ config('app.name', 'Finance') }}</title>
 
     <!-- Fonts -->
     <link rel="dns-prefetch" href="//fonts.bunny.net">
@@ -20,35 +20,131 @@
     <style>
         body {
             font-family: 'Poppins', sans-serif;
-            background-color: #f8f9fa;
+            background-color: #f0f0f0;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
         }
+
+        #app {
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
         .navbar-brand {
             font-weight: 600;
         }
-        .banking-nav {
-            background-color: #1e3c72;
-            background-image: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+
+        .desktop-nav {
+            background-color: #2b3a4a;
+            border-bottom: 1px solid #1a2533;
         }
-        .banking-nav .navbar-brand,
-        .banking-nav .nav-link {
+
+        .desktop-nav .navbar-brand,
+        .desktop-nav .nav-link {
             color: #ffffff;
         }
-        .banking-nav .nav-link:hover {
-            color: rgba(255, 255, 255, 0.85);
+
+        .desktop-nav .nav-link {
+            padding: 0.8rem 1rem;
+            border-radius: 4px;
+            margin-right: 3px;
         }
+
+        .desktop-nav .nav-link:hover {
+            background-color: rgba(255, 255, 255, 0.1);
+            color: #ffffff;
+        }
+
+        .desktop-nav .nav-link.active {
+            background-color: rgba(255, 255, 255, 0.2);
+            color: #ffffff;
+        }
+
+        .card {
+            border: none;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+            border-radius: 8px;
+        }
+
+        .card-header {
+            background-color: #f8f9fa;
+            border-bottom: 1px solid #eee;
+            padding: 0.8rem 1.25rem;
+            font-weight: 500;
+        }
+
         .btn-primary {
-            background-color: #1e3c72;
-            border-color: #1e3c72;
+            background-color: #3050a0;
+            border-color: #3050a0;
         }
+
         .btn-primary:hover, .btn-primary:focus {
-            background-color: #152c54;
-            border-color: #152c54;
+            background-color: #253c80;
+            border-color: #253c80;
         }
-        .footer {
-            background-color: #f1f3f5;
+
+        main {
+            flex: 1;
             padding: 1.5rem 0;
-            margin-top: 3rem;
+            background-color: #f0f0f0;
+        }
+
+        .footer {
+            background-color: #f8f9fa;
+            padding: 1rem 0;
+            border-top: 1px solid #e9ecef;
             color: #6c757d;
+            margin-top: auto;
+        }
+
+        .status-bar {
+            background-color: #f8f9fa;
+            color: #6c757d;
+            font-size: 0.75rem;
+            padding: 0.25rem 1rem;
+            border-top: 1px solid #e9ecef;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .local-storage-badge {
+            background-color: rgba(40, 167, 69, 0.8);
+            color: white;
+            padding: 0.15rem 0.4rem;
+            border-radius: 3px;
+            font-size: 0.7rem;
+            display: inline-flex;
+            align-items: center;
+            gap: 2px;
+            border: 1px solid rgba(40, 167, 69, 1);
+        }
+
+        /* Scrollbar personalizada */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: #f8f8f8;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: #d4d4d4;
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: #b0b0b0;
+        }
+
+        /* App header styles */
+        .app-header {
+            display: flex;
+            align-items: center;
         }
     </style>
 
@@ -124,17 +220,30 @@
 </head>
 <body>
     <div id="app">
-        <nav class="navbar navbar-expand-md navbar-dark banking-nav shadow-sm">
+        <!-- Barra de título de la aplicación -->
+        <div class="bg-dark text-white py-2 px-3 d-flex align-items-center justify-content-between">
+            <div class="d-flex align-items-center">
+                <i class="bi bi-bank me-2 fs-5"></i>
+            </div>
+            <div class="text-center flex-grow-1">
+                <span class="fs-6 fw-semibold">{{ config('app.name', 'Finance') }} - Aplicación de Finanzas Personales</span>
+            </div>
+            <div>
+                <small class="text-white-50">v1.0.0</small>
+            </div>
+        </div>
+
+        <nav class="navbar navbar-expand-md navbar-dark desktop-nav shadow-sm py-1">
             <div class="container">
                 <a class="navbar-brand" href="{{ url('/') }}">
-                    <i class="bi bi-bank me-2"></i>{{ config('app.name', 'Personal Finance') }}
+                    <i class="bi bi-bank me-2"></i>{{ config('app.name', 'Finance') }}
                 </a>
-                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="{{ __('Toggle navigation') }}">
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="{{ __('Alternar navegación') }}">
                     <span class="navbar-toggler-icon"></span>
                 </button>
 
                 <div class="collapse navbar-collapse" id="navbarSupportedContent">
-                    <!-- Left Side Of Navbar -->
+                    <!-- Left Side Of Navbar - Application Menu -->
                     <ul class="navbar-nav me-auto">
                         @auth
                         <li class="nav-item">
@@ -158,28 +267,37 @@
                         @endauth
                     </ul>
 
-                    <!-- Right Side Of Navbar -->
+                    <!-- Right Side Of Navbar - User Menu -->
                     <ul class="navbar-nav ms-auto">
                         <!-- Authentication Links -->
                         @guest
                             @if (Route::has('login'))
                                 <li class="nav-item">
-                                    <a class="btn btn-outline-light me-2" href="{{ route('login') }}"><i class="bi bi-box-arrow-in-right me-1"></i>Iniciar Sesión</a>
+                                    <a class="btn btn-outline-light btn-sm me-2" href="{{ route('login') }}"><i class="bi bi-box-arrow-in-right me-1"></i>Iniciar Sesión</a>
                                 </li>
                             @endif
 
                             @if (Route::has('register'))
                                 <li class="nav-item">
-                                    <a class="btn btn-light" href="{{ route('register') }}"><i class="bi bi-person-plus me-1"></i>Registrarse</a>
+                                    <a class="btn btn-light btn-sm" href="{{ route('register') }}"><i class="bi bi-person-plus me-1"></i>Registrarse</a>
                                 </li>
                             @endif
                         @else
+                            <li class="nav-item">
+                                <span class="nav-link local-storage-badge me-2" title="Tus datos se almacenan localmente en tu dispositivo">
+                                    <i class="bi bi-hdd-fill"></i> Local
+                                </span>
+                            </li>
                             <li class="nav-item dropdown">
                                 <a id="navbarDropdown" class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false" v-pre>
                                     <i class="bi bi-person-circle me-1"></i>{{ Auth::user()->name }}
                                 </a>
 
                                 <div class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
+                                    <div class="dropdown-header pb-0 text-muted">
+                                        <small><i class="bi bi-database me-1"></i> Datos almacenados localmente</small>
+                                    </div>
+                                    <div class="dropdown-divider"></div>
                                     <a class="dropdown-item" href="{{ route('profile') }}">
                                         <i class="bi bi-person me-2"></i>Mi Perfil
                                     </a>
@@ -207,24 +325,61 @@
             </div>
         </nav>
 
+        <!-- Notificación de almacenamiento local -->
+        <div class="local-storage-notification bg-light border-bottom py-1 px-3 text-center">
+            <div class="container">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div></div> <!-- Espaciador -->
+                    <div class="d-flex align-items-center">
+                        <i class="bi bi-shield-lock text-success me-2"></i>
+                        <span class="text-muted small">Almacenamiento 100% local - Tus datos nunca salen de tu dispositivo</span>
+                    </div>
+                    <button type="button" class="btn-close btn-sm" onclick="hideLocalStorageNotification()"></button>
+                </div>
+            </div>
+        </div>
+
         <main class="py-4">
             @yield('content')
         </main>
 
-        <footer class="footer">
+        <!-- Script para la notificación -->
+        <script>
+            function hideLocalStorageNotification() {
+                document.querySelector('.local-storage-notification').style.display = 'none';
+                localStorage.setItem('localStorageNotificationHidden', 'true');
+            }
+
+            document.addEventListener('DOMContentLoaded', function() {
+                if (localStorage.getItem('localStorageNotificationHidden') === 'true') {
+                    document.querySelector('.local-storage-notification').style.display = 'none';
+                }
+            });
+        </script>
+
+        <!-- Barra de estado -->
+        <div class="status-bar">
+            <div>
+                <i class="bi bi-shield-lock text-success me-1"></i>
+                <small>Datos protegidos</small>
+            </div>
+            <div class="d-flex gap-3">
+                <a href="{{ route('terms') }}" class="text-muted small">Términos y Condiciones</a>
+                <a href="{{ route('privacy') }}" class="text-muted small">Política de Privacidad</a>
+                <span class="text-muted small">&copy; {{ date('Y') }} Finance</span>
+            </div>
+        </div>
+
+        <!-- Footer compacto -->
+        <footer class="footer d-md-none">
             <div class="container">
                 <div class="row">
-                    <div class="col-md-6">
-                        <h5><i class="bi bi-bank me-2"></i>Gestor de Finanzas Personal</h5>
-                        <p class="small">Tu solución segura para gestionar tus finanzas personales.</p>
-                    </div>
-                    <div class="col-md-6 text-md-end">
-                        <p class="small">&copy; {{ date('Y') }} Finanzas Personales. Todos los derechos reservados.</p>
-                        <p class="small">Seguro y privado. Tus datos se guardan en tu dispositivo.</p>
-                        <p class="small">
-                            <a href="{{ route('terms') }}" class="text-muted me-3">Términos y Condiciones</a>
-                            <a href="{{ route('privacy') }}" class="text-muted">Política de Privacidad</a>
+                    <div class="col-12 text-center">
+                        <p class="small mb-1">
+                            <i class="bi bi-shield-lock me-1 text-success"></i>
+                            <span>Datos protegidos en tu dispositivo</span>
                         </p>
+                        <p class="small">&copy; {{ date('Y') }} Finance. Todos los derechos reservados.</p>
                     </div>
                 </div>
             </div>

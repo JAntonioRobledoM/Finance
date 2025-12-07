@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Hash;
 
 class HomeController extends Controller
 {
@@ -178,5 +179,45 @@ class HomeController extends Controller
         }
 
         return redirect()->route('finances.budget')->with('success', 'Presupuesto actualizado correctamente!');
+    }
+
+    /**
+     * Actualizar la información del perfil del usuario.
+     */
+    public function updateProfile(Request $request)
+    {
+        $user = auth()->user();
+
+        $validated = $request->validate([
+            'name' => 'required|string|max:255',
+            'email' => 'required|string|email|max:255|unique:users,email,' . $user->id,
+        ]);
+
+        $user->update($validated);
+
+        return redirect()->route('profile')->with('success', 'Perfil actualizado correctamente!');
+    }
+
+    /**
+     * Actualizar la contraseña del usuario.
+     */
+    public function updatePassword(Request $request)
+    {
+        $user = auth()->user();
+
+        $validated = $request->validate([
+            'current_password' => ['required', function ($attribute, $value, $fail) use ($user) {
+                if (!Hash::check($value, $user->password)) {
+                    return $fail('La contraseña actual es incorrecta.');
+                }
+            }],
+            'password' => 'required|string|min:8|confirmed|different:current_password',
+        ]);
+
+        $user->update([
+            'password' => Hash::make($validated['password']),
+        ]);
+
+        return redirect()->route('profile')->with('success', 'Contraseña actualizada correctamente!');
     }
 }

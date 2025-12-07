@@ -13,7 +13,12 @@ class NativeAppServiceProvider implements ProvidesPhpIni
      */
     public function boot(): void
     {
-        Window::open();
+        // Usar la configuración más básica posible
+        Window::open()
+    ->width(1280)
+    ->height(800)
+    ->title('Mi App');
+
     }
 
     /**
@@ -22,6 +27,7 @@ class NativeAppServiceProvider implements ProvidesPhpIni
     public function phpIni(): array
     {
         return [
+            // Mantener configuración mínima
         ];
     }
 }

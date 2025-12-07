@@ -6,6 +6,8 @@ use App\Http\Controllers\TransactionController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\StaticPagesController;
 use App\Http\Controllers\AnalyticsController;
+use App\Http\Controllers\SavingsGoalController;
+use App\Http\Controllers\SavingsContributionController;
 
 // Public routes
 Route::get('/', fn() => view('welcome'))->name('welcome');
@@ -65,10 +67,24 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/analytics', [AnalyticsController::class, 'index'])->name('finances.analytics');
         Route::get('/analytics/data', [AnalyticsController::class, 'getAnalyticsData'])->name('finances.analytics.data');
 
-        // Savings
-        Route::get('/savings', fn() => view('finances.savings'))->name('finances.savings');
+        // Savings Goals
+        Route::get('/savings', [SavingsGoalController::class, 'index'])->name('finances.savings');
+        Route::get('/savings/create', [SavingsGoalController::class, 'create'])->name('finances.savings.create');
+        Route::post('/savings', [SavingsGoalController::class, 'store'])->name('finances.savings.store');
+        Route::get('/savings/{savingsGoal}', [SavingsGoalController::class, 'show'])->name('finances.savings.show');
+        Route::get('/savings/{savingsGoal}/edit', [SavingsGoalController::class, 'edit'])->name('finances.savings.edit');
+        Route::put('/savings/{savingsGoal}', [SavingsGoalController::class, 'update'])->name('finances.savings.update');
+        Route::delete('/savings/{savingsGoal}', [SavingsGoalController::class, 'destroy'])->name('finances.savings.destroy');
+        Route::put('/savings/{savingsGoal}/complete', [SavingsGoalController::class, 'complete'])->name('finances.savings.complete');
+        Route::put('/savings/{savingsGoal}/status', [SavingsGoalController::class, 'changeStatus'])->name('finances.savings.status');
+
+        // Savings Contributions
+        Route::post('/savings/{savingsGoal}/contributions', [SavingsContributionController::class, 'store'])->name('finances.contributions.store');
+        Route::delete('/contributions/{contribution}', [SavingsContributionController::class, 'destroy'])->name('finances.contributions.destroy');
     });
 
     // User profile and settings
     Route::get('/profile', fn() => view('profile'))->name('profile');
+    Route::put('/profile', [HomeController::class, 'updateProfile'])->name('profile.update');
+    Route::put('/profile/password', [HomeController::class, 'updatePassword'])->name('profile.password.update');
 });
